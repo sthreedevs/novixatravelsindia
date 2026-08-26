@@ -1,6 +1,9 @@
 "use client";
 import React, { useState } from "react";
-import axios from "axios";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { contactUsSchema } from "@/lib/validations/index.js";
+import { submitContactForm } from "@/lib/actions/contact.actions.js";
 import { toast } from "react-toastify";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
@@ -17,32 +20,39 @@ const words = [
 ];
 
 const ContactUs = () => {
-  const [data, setData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    enterYourMessage: "",
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(contactUsSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      enterYourMessage: "",
+    },
   });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
     try {
-      await axios.post("/api/contactUs/add", data);
-      setData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        enterYourMessage: "",
-      });
-      toast.success("Success! Form submitted.");
+      const res = await submitContactForm(data);
+      if (res.success) {
+        toast.success(res.message);
+        reset();
+      } else {
+        toast.error(res.error || "Oops! Something went wrong.");
+      }
     } catch (error) {
-      toast.warning(error.response.data.error || "Oops! Something went wrong.");
+      toast.error("An unexpected error occurred.");
       console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
-  };
-
-  const handleChange = (e) => {
-    setData({ ...data, [e.target.name]: e.target.value });
   };
 
   return (
@@ -71,58 +81,60 @@ const ContactUs = () => {
 
       {/* form */}
       <div className="shadow-input mx-auto w-full max-w-2xl lg:max-w-5xl rounded-none bg-white p-4 md:rounded-2xl dark:bg-black">
-        <form className="my-2" onSubmit={handleSubmit}>
-          <div className="mb-4 flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">
+        <form className="my-2" onSubmit={handleSubmit(onSubmit)}>
+          <div className="mb-4 flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
             <LabelInputContainer>
               <Label htmlFor="firstName">First name</Label>
               <Input
                 id="firstName"
-                name="firstName"
                 placeholder="Tyler"
                 type="text"
-                value={data.firstName}
-                onChange={handleChange}
+                {...register("firstName")}
+                className={errors.firstName ? "border-red-500" : ""}
               />
+              {errors.firstName && <span className="text-red-500 text-xs">{errors.firstName.message}</span>}
             </LabelInputContainer>
             <LabelInputContainer>
               <Label htmlFor="lastName">Last name</Label>
               <Input
                 id="lastName"
-                name="lastName"
                 placeholder="Durden"
                 type="text"
-                value={data.lastName}
-                onChange={handleChange}
+                {...register("lastName")}
+                className={errors.lastName ? "border-red-500" : ""}
               />
+              {errors.lastName && <span className="text-red-500 text-xs">{errors.lastName.message}</span>}
             </LabelInputContainer>
           </div>
           <LabelInputContainer className="mb-4">
             <Label htmlFor="email">Email Address</Label>
             <Input
               id="email"
-              name="email"
               placeholder="projectmayhem@fc.com"
               type="email"
-              value={data.email}
-              onChange={handleChange}
+              {...register("email")}
+              className={errors.email ? "border-red-500" : ""}
             />
+            {errors.email && <span className="text-red-500 text-xs">{errors.email.message}</span>}
           </LabelInputContainer>
           <LabelInputContainer className="mb-4">
             <Label htmlFor="enterYourMessage">Enter Your Message</Label>
             <textarea
               id="enterYourMessage"
-              name="enterYourMessage"
               placeholder="Write a message..."
-              value={data.enterYourMessage}
-              onChange={handleChange}
-              className="p-[10px] rounded-[4px] outline-none border-none resize-none h-[140px] bg-zinc-800 text-white"
+              {...register("enterYourMessage")}
+              className={`p-[10px] rounded-[4px] outline-none resize-none h-[140px] bg-zinc-800 text-white ${
+                errors.enterYourMessage ? "border border-red-500" : "border-none"
+              }`}
             />
+            {errors.enterYourMessage && <span className="text-red-500 text-xs">{errors.enterYourMessage.message}</span>}
           </LabelInputContainer>
           <button
-            className="group/btn relative block h-10 w-full rounded-md bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-800 dark:from-zinc-900 dark:to-zinc-900 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset]"
+            className="group/btn relative block h-10 w-full rounded-md bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-800 dark:from-zinc-900 dark:to-zinc-900 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset] disabled:opacity-50"
             type="submit"
+            disabled={isSubmitting}
           >
-            Submit &rarr;
+            {isSubmitting ? "Submitting..." : "Submit \u2192"}
             <BottomGradient />
           </button>
         </form>

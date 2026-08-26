@@ -121,7 +121,7 @@ const placeholders = [
 const Navbar = () => {
   const dispatch = useDispatch();
   const { data = [] } = useSelector((state) => state.destination);
-  const navigate = useRouter();
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -359,7 +359,7 @@ const Navbar = () => {
             )}
           </div>
 
-          <Button onClick={() => navigate("/contact-us")}>Contact Us</Button>
+          <Button onClick={() => router.push("/contact-us")}>Contact Us</Button>
           {/* <Toggle onClick={() => dispatch(toggleDarkMode())}>
           {darkMode ? <Sun size={20} /> : <Moon size={20} />}
         </Toggle> */}
@@ -477,7 +477,7 @@ const Navbar = () => {
               <Button
                 onClick={() => {
                   setMobileOpen(false);
-                  navigate("/contact-us");
+                  router.push("/contact-us");
                 }}
                 className="w-full text-lg py-6"
               >

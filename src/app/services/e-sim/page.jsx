@@ -104,12 +104,22 @@ const Esim = () => {
       if (selectedPlan?._id) {
         data.append("selectedDataPlan", selectedPlan._id);
       }
-      await axios.post(`/api/service/eSimEnquiry/`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      toast.success("Success! Form submitted.");
+      const { submitEnquiry } = await import("@/lib/actions/enquiry.js");
+      const result = await submitEnquiry("eSim", data);
+      
+      if (result.success) {
+        toast.success("Success! Form submitted.");
+        setFormData({
+          firstname: "",
+          lastname: "",
+          phone: "",
+          email: "",
+          country: "",
+          passport: null,
+        });
+      } else {
+        toast.warning(result.error || "Oops! Something went wrong.");
+      }
     } catch (error) {
       toast.warning(error.response.data.error || "Oops! Something went wrong.");
       console.error(error);

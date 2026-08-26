@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 
 
 const LoginForm = () => {
-  const navigate = useRouter();
+  const router = useRouter();
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -24,7 +24,7 @@ const LoginForm = () => {
 
       if (res.data.success) {
         toast.success("Login successful!");
-        navigate("/admin");
+        router.push("/admin");
       }
       setData({ email: "", password: "" });
     } catch (error) {

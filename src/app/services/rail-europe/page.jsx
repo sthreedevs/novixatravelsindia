@@ -123,11 +123,17 @@ const PassForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/api/service/europeRailPassEnquiry", data);
-      setData({});
-      toast.success("Success! Form submitted.");
+      const { submitEnquiry } = await import("@/lib/actions/enquiry.js");
+      const result = await submitEnquiry("europeRailPass", data);
+      
+      if (result.success) {
+        toast.success("Success! Enquiry submitted.");
+        setData({});
+      } else {
+        toast.warning(result.error || "Oops! Something went wrong.");
+      }
     } catch (error) {
-      toast.warning(error.response.data.error || "Oops! Something went wrong.");
+      toast.warning("Oops! Something went wrong.");
       console.error(error);
     }
   };
@@ -359,11 +365,17 @@ const TicketForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/api/service/europeRailTicketEnquiry", data);
-      setData({});
-      toast.success("Success! Form submitted.");
+      const { submitEnquiry } = await import("@/lib/actions/enquiry.js");
+      const result = await submitEnquiry("europeRailTicket", data);
+      
+      if (result.success) {
+        toast.success("Success! Enquiry submitted.");
+        setData({});
+      } else {
+        toast.warning(result.error || "Oops! Something went wrong.");
+      }
     } catch (error) {
-      toast.warning(error.response.data.error || "Oops! Something went wrong.");
+      toast.warning("Oops! Something went wrong.");
       console.error(error);
     }
   };

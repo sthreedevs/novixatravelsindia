@@ -1,14 +1,15 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { cn, transformPackageData } from "@/lib/utils";
+import React from "react";
+import { transformPackageData } from "@/lib/utils";
 import { BadgeDollarSign, ShieldCheck, Smartphone } from "lucide-react";
 import { Grid } from "@/components/ui/grid";
-import { Button } from "@/components/ui/button";
 import Carousel from "@/components/common/Carousel";
-import { useRouter } from "next/navigation";
+import { getPackagesPageData } from "@/lib/services/package.service";
+import { PackageCard } from "@/components/packages/PackageCard";
 
-import axios from "axios";
-import Loader from "@/components/common/Loader";
+export const metadata = {
+  title: "Travel Packages | Novixa Travels",
+  description: "Explore the best travel packages at unbeatable prices.",
+};
 
 const whyChooseUs = [
   {
@@ -37,30 +38,10 @@ const whyChooseUs = [
   },
 ];
 
-const Packages = () => {
-  const [packagesPageData, setPackagesPageData] = useState(null); // Initialize with null for loading state
+export default async function Packages() {
+  const packagesPageData = await getPackagesPageData();
   const carouselData = packagesPageData?.carouselData;
   const packageData = transformPackageData(packagesPageData?.packageData);
-
-  const fetchData = async () => {
-    try {
-      const packagesResponse = await axios.get(
-        "/api/package/getPackagesPageData"
-      );
-      const packagesPageData = packagesResponse.data.data;
-      setPackagesPageData(packagesPageData);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  if (packagesPageData === null) {
-    return <Loader />; // Show loader while data is being fetched
-  }
 
   return (
     <div className="relative pt-20 min-h-screen">
@@ -107,51 +88,4 @@ const Packages = () => {
       </div>
     </div>
   );
-};
-
-const PackageCard = ({ data }) => {
-  const navigate = useRouter();
-  return (
-    <div className="w-full max-w-md xl:mb-4 mx-auto">
-      <div
-        className={cn(
-          "group w-full overflow-hidden relative card h-60 rounded-md shadow-xl mx-auto flex flex-col justify-end p-4 border border-transparent dark:border-neutral-800",
-          data?.image && `bg-[url('${data.image.replace(/'/g, "\\'")}')]`, // Fixed URL escaping
-          "bg-cover bg-center bg-no-repeat", // Added missing background properties
-          // Preload hover image
-          "before:bg-[url(https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWlodTF3MjJ3NnJiY3Rlc2J0ZmE0c28yeWoxc3gxY2VtZzA5ejF1NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/syEfLvksYQnmM/giphy.gif)] before:fixed before:inset-0 before:opacity-0 before:z-[-1]",
-          "hover:bg-[url(https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWlodTF3MjJ3NnJiY3Rlc2J0ZmE0c28yeWoxc3gxY2VtZzA5ejF1NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/syEfLvksYQnmM/giphy.gif)]",
-          "hover:after:content-[''] hover:after:absolute hover:after:inset-0 hover:after:bg-black hover:after:opacity-50",
-          "transition-all duration-500"
-        )}
-        style={{
-          // Fallback inline style to ensure image displays
-          backgroundImage: data?.image
-            ? `url('${data.image.replace(/'/g, "\\'")}')`
-            : undefined,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        <div className="text relative z-40">
-          <h1 className="font-bold text-xl md:text-3xl text-gray-50 relative">
-            {data.title}
-          </h1>
-          <p className="font-normal text-base text-gray-50 relative my-4">
-            {data.description}
-          </p>
-          <Button
-            onClick={() => navigate(data._id)}
-            variant="outline"
-            className="cursor-pointer"
-          >
-            Explore
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default Packages;
+}

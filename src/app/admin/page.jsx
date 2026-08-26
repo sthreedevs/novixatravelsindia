@@ -95,12 +95,12 @@ const manageItems = [
 ];
 
 const Dashboard = () => {
-  const navigate = useRouter();
+  const router = useRouter();
 
   const handleLogout = async () => {
     try {
       await axios.post("/api/user/logout");
-      navigate("/auth");
+      router.push("/auth");
       toast.success("Logged out successfully!");
     } catch (error) {
       console.error("Failed to logout:", error);

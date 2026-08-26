@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 const Auth = () => {
   const [currForm, setCurrForm] = useState("login");
   const [loading, setLoading] = useState(true); // Added loading state for user fetch
-  const navigate = useRouter();
+  const router = useRouter();
 
   const toggleForm = () => {
     setCurrForm((prev) => (prev === "login" ? "signup" : "login"));
@@ -19,7 +19,7 @@ const Auth = () => {
     try {
       const response = await axios.get("/api/user/me");
       if (response.data.data._id) {
-        navigate("/admin"); // Redirect to /admin if user is logged in
+        router.push("/admin"); // Redirect to /admin if user is logged in
       }
     } catch (error) {
       console.error(error);

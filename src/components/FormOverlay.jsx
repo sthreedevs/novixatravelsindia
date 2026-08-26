@@ -153,7 +153,7 @@ const FormOverlay = () => {
 
   const handleSubmit = async () => {
     dispatch(setModalForm(null));
-    toast.info("Submitting your request");
+    toast.info("Submitting your request...");
     try {
       const typeOfForm = modalForm;
       const formDataToSend = new FormData();
@@ -161,16 +161,20 @@ const FormOverlay = () => {
         formDataToSend.append(key, formData[key]);
       }
       files.forEach((file) => formDataToSend.append("documents", file));
-      await axios.post(`/api/service/${typeOfForm}Enquiry`, formDataToSend, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      toast.success("Success! Request submitted.");
+      
+      const { submitEnquiry } = await import("@/lib/actions/enquiry.js");
+      const result = await submitEnquiry(typeOfForm, formDataToSend);
+      
+      if (result.success) {
+        toast.success("Success! Request submitted.");
+        // Clear local storage on success
+        localStorage.removeItem("formData");
+        localStorage.removeItem("files");
+      } else {
+        toast.warning(result.error || "Oops! Something went wrong.");
+      }
     } catch (error) {
-      toast.warning(
-        error?.response?.data?.error || "Oops! Something went wrong."
-      );
+      toast.warning("Oops! Something went wrong.");
       console.error(error);
     }
   };
@@ -179,9 +183,11 @@ const FormOverlay = () => {
     const savedFormData = localStorage.getItem("formData");
     const savedFiles = localStorage.getItem("files");
     if (savedFormData) {
+      // eslint-disable-next-line
       setFormData(JSON.parse(savedFormData));
     }
     if (savedFiles) {
+       
       setFiles(JSON.parse(savedFiles));
     }
   }, []);

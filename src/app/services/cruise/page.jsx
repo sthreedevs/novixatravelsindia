@@ -58,11 +58,17 @@ const Cruise = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/api/service/cruiseEnquiry", data);
-      setData({});
-      toast.success("Success! Form submitted.");
+      const { submitEnquiry } = await import("@/lib/actions/enquiry.js");
+      const result = await submitEnquiry("cruise", data);
+      
+      if (result.success) {
+        toast.success("Success! Enquiry submitted.");
+        setData({});
+      } else {
+        toast.warning(result.error || "Oops! Something went wrong.");
+      }
     } catch (error) {
-      toast.warning(error.response.data.error || "Oops! Something went wrong.");
+      toast.warning("Oops! Something went wrong.");
       console.error(error);
     }
   };
