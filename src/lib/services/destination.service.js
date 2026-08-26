@@ -47,3 +47,20 @@ export async function getAllDestinations() {
   const destinations = await Destination.find().lean();
   return JSON.parse(JSON.stringify(destinations));
 }
+
+export async function getDestinationById(id) {
+  if (id === 'add' || id === 'new') return null;
+  
+  try {
+    await connectDB();
+    const dest = await Destination.findById(id)
+      .populate("descriptions")
+      .populate("carouselData")
+      .lean();
+    if (!dest) return null;
+    return JSON.parse(JSON.stringify(dest));
+  } catch (error) {
+    console.error("Error fetching destination by ID:", error);
+    return null;
+  }
+}
