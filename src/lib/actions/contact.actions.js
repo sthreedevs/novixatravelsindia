@@ -3,6 +3,7 @@
 import { connectDB } from "@/lib/db/index.js";
 import { ContactUs } from "@/lib/models/serviceModels/contactUs.model.js";
 import { contactUsSchema } from "@/lib/validations/index.js";
+import { sendEnquiryNotificationToAdmin } from "@/lib/utils/emailService.js";
 
 export async function submitContactForm(data) {
   try {
@@ -14,6 +15,14 @@ export async function submitContactForm(data) {
 
     // 3. Create entry
     const newContact = await ContactUs.create(validatedData);
+
+    // 4. Send email notification
+    if (newContact) {
+      sendEnquiryNotificationToAdmin({
+        enquiryType: "Contact Us Message",
+        enquiryId: newContact._id,
+      }).catch(console.error);
+    }
 
     // Return a plain object to the client because Mongoose documents can't be passed from Server Actions directly
     return {
