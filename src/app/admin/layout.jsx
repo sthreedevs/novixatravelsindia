@@ -21,7 +21,13 @@ const SIDEBAR_ITEMS = [
   { name: "Packages", href: "/admin/packages", icon: Package },
   { name: "Destinations", href: "/admin/destinations", icon: MapPin },
   { name: "Hotels", href: "/admin/hotels", icon: Building2 },
+  { name: "eSIMs", href: "/admin/esims", icon: Building2 },
+  { name: "Day Trips", href: "/admin/day-trips", icon: Building2 },
+  { name: "Testimonials", href: "/admin/testimonials", icon: FileText },
+  { name: "Subscribers", href: "/admin/subscribers", icon: Mail },
   { name: "Blogs", href: "/admin/blogs", icon: FileText },
+  { name: "Guides", href: "/admin/guides", icon: FileText },
+  { name: "Offers Banner", href: "/admin/offers", icon: Package },
   { name: "Enquiries", href: "/admin/enquiries", icon: Mail },
 ];
 

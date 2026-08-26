@@ -18,7 +18,7 @@ const VerifySubscriber = async ({ params }) => {
               Subscription Verified!
             </h2>
             <p className="text-gray-300">
-              You're now subscribed to our newsletter. 🎉
+              You&apos;re now subscribed to our newsletter. 🎉
             </p>
           </>
         )}

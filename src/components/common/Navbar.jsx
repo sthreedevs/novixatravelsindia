@@ -227,7 +227,14 @@ const Navbar = ({ initialOffers }) => {
       <div className="bg-white/90 dark:bg-black/90 px-4 lg:px-10 py-4 flex justify-between items-center border-b-2">
         {/* Logo & Menu */}
         <div className="flex items-center gap-4">
-          <Image src="/logo.png" alt="logo" className="size-12 rounded-full" width={48} height={48} priority />
+          <Image
+            src="/logo.png"
+            alt="logo"
+            className="size-12 rounded-full"
+            width={48}
+            height={48}
+            priority
+          />
           <div className="hidden lg:flex gap-4 text-sm font-medium">
             <div
               className="relative"
@@ -291,7 +298,7 @@ const Navbar = ({ initialOffers }) => {
                         {item.title}
                       </Link>
                     </NavigationMenuItem>
-                  )
+                  ),
                 )}
               </NavigationMenuList>
             </NavigationMenu>
@@ -329,7 +336,7 @@ const Navbar = ({ initialOffers }) => {
                             link = `/services/packages/${item.slug || item._id}`;
                           } else if (item.type === "destination") {
                             link = `/destination/${encodeURIComponent(
-                              item.name
+                              item.name,
                             )}`;
                           } else if (item.type === "blog") {
                             link = `/blogs/${item._id}`;
@@ -409,7 +416,7 @@ const Navbar = ({ initialOffers }) => {
                               link = `/services/packages/${item.slug || item._id}`;
                             else if (item.type === "destination")
                               link = `/destination/${encodeURIComponent(
-                                item.name
+                                item.name,
                               )}`;
                             else if (item.type === "blog")
                               link = `/blogs/${item._id}`;
@@ -463,7 +470,7 @@ const Navbar = ({ initialOffers }) => {
                     >
                       {item.title}
                     </Link>
-                  )
+                  ),
                 )}
               </nav>
 
@@ -504,7 +511,7 @@ const ListItem = React.forwardRef(
             ref={ref}
             className={cn(
               "block select-none space-y-1 rounded-md p-3 leading-none no-underline transition-colors hover:bg-orange-300 hover:text-black",
-              className
+              className,
             )}
             {...props}
           >
@@ -528,7 +535,8 @@ const ListItem = React.forwardRef(
         </NavigationMenuLink>
       </li>
     );
-  }
+  },
 );
+ListItem.displayName = "ListItem";
 
 export default Navbar;

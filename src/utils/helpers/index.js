@@ -349,7 +349,7 @@ export const batchArray = (array, batchSize) => {
   return batches;
 };
 
-export default {
+const helpers = {
   formatDate,
   formatDuration,
   formatCurrency,
@@ -378,3 +378,5 @@ export default {
   retryWithBackoff,
   batchArray,
 };
+
+export default helpers;

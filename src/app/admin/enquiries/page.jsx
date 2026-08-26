@@ -1,5 +1,5 @@
 import React from "react";
-import { getContactEnquiries, getBookingEnquiries } from "@/lib/services/enquiry.service";
+import { getContactEnquiries, getBookingEnquiries, getAllServiceEnquiries } from "@/lib/services/enquiry.service";
 import EnquiriesDashboardClient from "./EnquiriesDashboardClient";
 
 export const metadata = {
@@ -7,10 +7,11 @@ export const metadata = {
 };
 
 export default async function AdminEnquiriesPage() {
-  const [contacts, bookings] = await Promise.all([
+  const [contacts, bookings, services] = await Promise.all([
     getContactEnquiries(),
-    getBookingEnquiries()
+    getBookingEnquiries(),
+    getAllServiceEnquiries()
   ]);
 
-  return <EnquiriesDashboardClient contacts={contacts} bookings={bookings} />;
+  return <EnquiriesDashboardClient contacts={contacts} bookings={bookings} services={services || {}} />;
 }

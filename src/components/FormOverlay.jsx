@@ -183,7 +183,6 @@ const FormOverlay = () => {
     const savedFormData = localStorage.getItem("formData");
     const savedFiles = localStorage.getItem("files");
     if (savedFormData) {
-      // eslint-disable-next-line
       setFormData(JSON.parse(savedFormData));
     }
     if (savedFiles) {

@@ -1,0 +1,98 @@
+"use client";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { createTestimonial } from "@/lib/actions/admin/testimonials.actions";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+
+export default function NewTestimonialPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "", 
+    designation: "", 
+    review: ""
+  });
+  const [image, setImage] = useState(null);
+
+  const handleTextChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const data = new FormData();
+      Object.keys(formData).forEach(key => data.append(key, formData[key]));
+      if (image) data.append("image", image);
+
+      const res = await createTestimonial(data);
+      if (res.success) {
+        toast.success("Testimonial created successfully!");
+        router.push("/admin/testimonials");
+      } else {
+        toast.error(res.error || "Failed to create testimonial");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto space-y-6">
+      <div className="flex items-center space-x-4">
+        <Link href="/admin/testimonials" className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors">
+          <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+        </Link>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Add New Testimonial</h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-8">
+        
+        <div className="bg-white dark:bg-zinc-900 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-zinc-800 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium mb-1">Reviewer Name *</label>
+              <Input required name="name" value={formData.name} onChange={handleTextChange} placeholder="John Doe" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Designation *</label>
+              <Input required name="designation" value={formData.designation} onChange={handleTextChange} placeholder="CEO, Tech Inc" />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-1">Review *</label>
+              <textarea 
+                required 
+                name="review" 
+                value={formData.review} 
+                onChange={handleTextChange} 
+                className="w-full p-3 rounded-md border border-gray-300 dark:border-zinc-700 bg-transparent text-sm h-32"
+                placeholder="Write the review here..."
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium mb-1">Reviewer Image *</label>
+            <Input type="file" required onChange={(e) => setImage(e.target.files[0])} accept="image/*" />
+          </div>
+        </div>
+
+        <div className="flex justify-end pt-4 pb-12">
+          <Button type="submit" disabled={loading} className="bg-[#BFA181] hover:bg-[#a68c70] text-black px-8">
+            {loading ? "Creating..." : "Create Testimonial"}
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+}

@@ -233,7 +233,7 @@ export const validateFields = (fields) => {
   return Object.keys(errors).length === 0 ? null : errors;
 };
 
-export default {
+const validators = {
   validateEmail,
   validatePhone,
   validatePassword,
@@ -253,3 +253,5 @@ export default {
   validateCreditCard,
   validateFields,
 };
+
+export default validators;

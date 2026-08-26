@@ -140,6 +140,7 @@ export const usePrevious = (value) => {
     ref.current = value;
   }, [value]);
 
+  // eslint-disable-next-line react-hooks/refs
   return ref.current;
 };
 
@@ -191,9 +192,12 @@ export const useDebounce = (value, delay) => {
  */
 export const useThrottle = (value, limit) => {
   const [throttledValue, setThrottledValue] = useState(value);
-  const lastRun = useRef(Date.now());
+  const lastRun = useRef(null);
 
   useEffect(() => {
+    if (lastRun.current === null) {
+      lastRun.current = Date.now();
+    }
     const handler = setTimeout(() => {
       if (Date.now() - lastRun.current >= limit) {
         setThrottledValue(value);
@@ -374,7 +378,7 @@ export const usePagination = (items, itemsPerPage) => {
   };
 };
 
-export default {
+const hooks = {
   useAsync,
   useFetch,
   useLocalStorage,
@@ -392,3 +396,5 @@ export default {
   useForm,
   usePagination,
 };
+
+export default hooks;

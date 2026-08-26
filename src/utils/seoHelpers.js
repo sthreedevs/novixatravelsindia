@@ -218,7 +218,7 @@ export const calculateSEOMetrics = (metrics) => {
   return Math.max(0, score);
 };
 
-export default {
+const seoHelpers = {
   generatePageMeta,
   generateBreadcrumbs,
   optimizeImage,
@@ -233,3 +233,5 @@ export default {
   generateRobotsTxt,
   calculateSEOMetrics,
 };
+
+export default seoHelpers;

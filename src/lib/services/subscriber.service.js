@@ -21,3 +21,9 @@ export async function verifySubscriber(token) {
     return false;
   }
 }
+
+export async function getAllSubscribers() {
+  await connectDB();
+  const subs = await Subscriber.find().sort({ createdAt: -1 }).lean();
+  return JSON.parse(JSON.stringify(subs));
+}

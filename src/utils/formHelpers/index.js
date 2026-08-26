@@ -276,7 +276,7 @@ export const createFormDataWithFiles = (values) => {
   return formData;
 };
 
-export default {
+const formHelpers = {
   createFormState,
   handleFormChange,
   handleFormBlur,
@@ -295,3 +295,5 @@ export default {
   clearFieldError,
   createFormDataWithFiles,
 };
+
+export default formHelpers;

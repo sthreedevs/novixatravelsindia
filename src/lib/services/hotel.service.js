@@ -13,3 +13,22 @@ export async function getHotelsPageData() {
     hotelData,
   }));
 }
+
+export async function getAllHotels() {
+  await connectDB();
+  const hotels = await Hotel.find().sort({ createdAt: -1 }).lean();
+  return JSON.parse(JSON.stringify(hotels));
+}
+
+export async function getHotelById(id) {
+  if (id === 'add' || id === 'new') return null;
+  try {
+    await connectDB();
+    const hotel = await Hotel.findById(id).lean();
+    if (!hotel) return null;
+    return JSON.parse(JSON.stringify(hotel));
+  } catch (error) {
+    console.error("Error fetching hotel by ID:", error);
+    return null;
+  }
+}

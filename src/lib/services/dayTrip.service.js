@@ -8,3 +8,16 @@ export async function getDayTrips() {
 
   return JSON.parse(JSON.stringify(dayTrips));
 }
+
+export async function getDayTripById(id) {
+  if (id === 'add' || id === 'new') return null;
+  try {
+    await connectDB();
+    const dayTrip = await DayTrip.findById(id).lean();
+    if (!dayTrip) return null;
+    return JSON.parse(JSON.stringify(dayTrip));
+  } catch (error) {
+    console.error("Error fetching day trip by ID:", error);
+    return null;
+  }
+}

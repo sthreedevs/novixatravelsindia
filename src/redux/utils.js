@@ -271,7 +271,7 @@ export const memoizeSelector = (selector) => {
   };
 };
 
-export default {
+const utils = {
   createAsyncHandlers,
   createAsyncState,
   normalizeData,
@@ -292,3 +292,5 @@ export default {
   setStatePath,
   memoizeSelector,
 };
+
+export default utils;
