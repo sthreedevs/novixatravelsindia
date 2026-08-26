@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 
 const Carousel = ({ data = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -18,11 +19,12 @@ const Carousel = ({ data = [] }) => {
       {/* Carousel Wrapper */}
       <div className="relative h-56 overflow-hidden md:h-96 lg:h-[88vh]">
         {data?.map((item, index) => (
-          <img
-            key={item.title}
-            src={item.image}
-            alt={item.title}
-            className={`absolute z-20 block w-full transition-opacity duration-700 ease-in-out ${
+          <Image
+            key={item._id || index}
+            src={item.image || "/placeholder.jpg"}
+            alt={item.title || "Carousel Image"}
+            fill
+            className={`absolute z-20 block object-cover transition-opacity duration-700 ease-in-out ${
               index === currentIndex ? "opacity-100" : "opacity-0"
             }`}
           />

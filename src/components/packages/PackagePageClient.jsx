@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
+import Image from "next/image";
 import { useDispatch } from "react-redux";
 import { Grid } from "@/components/ui/grid";
 import Carousel from "@/components/ui/carousel";
@@ -53,20 +54,28 @@ export const PackagePageClient = ({ packageData }) => {
           </div>
           <div className="grid grid-cols-2 gap-4">
             {item.image1 && (
-              <img
-                key={`${item.dayTitle} image1`}
-                src={item.image1}
-                alt={`${item.dayTitle} image1`}
-                className="rounded-lg object-cover h-28 md:h-44 lg:h-60 w-full"
-              />
+              <div className="relative rounded-lg overflow-hidden h-28 md:h-44 lg:h-60 w-full">
+                <Image
+                  key={`${item.dayTitle} image1`}
+                  src={item.image1 || "/placeholder.jpg"}
+                  alt={`${item.dayTitle} image1`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover"
+                />
+              </div>
             )}
             {item.image2 && (
-              <img
-                key={`${item.dayTitle} image2`}
-                src={item.image2}
-                alt={`${item.dayTitle} image2`}
-                className="rounded-lg object-cover h-28 md:h-44 lg:h-60 w-full"
-              />
+              <div className="relative rounded-lg overflow-hidden h-28 md:h-44 lg:h-60 w-full">
+                <Image
+                  key={`${item.dayTitle} image2`}
+                  src={item.image2 || "/placeholder.jpg"}
+                  alt={`${item.dayTitle} image2`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover"
+                />
+              </div>
             )}
           </div>
         </div>

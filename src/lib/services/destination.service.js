@@ -41,3 +41,9 @@ export async function getDestinationPageData(countryName) {
     packageData,
   }));
 }
+
+export async function getAllDestinations() {
+  await connectDB();
+  const destinations = await Destination.find().lean();
+  return JSON.parse(JSON.stringify(destinations));
+}

@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { FaHotel, FaConciergeBell, FaShieldAlt } from "react-icons/fa";
 import { Grid } from "@/components/ui/grid";
@@ -201,10 +202,12 @@ const HotelCard = ({ hotel, handleFormModal }) => {
   return (
     <div className="group relative flex flex-col bg-zinc-200 dark:bg-zinc-800 rounded-3xl w-full max-w-sm mx-auto overflow-hidden transition-transform duration-300 hover:-translate-y-3 hover:shadow-2xl">
       {/* Card Image */}
-      <div className="flex-2 w-full aspect-[4/3] overflow-hidden rounded-3xl">
-        <img
-          src={hotel.thumbnail}
-          alt={hotel.name}
+      <div className="relative flex-2 w-full aspect-[4/3] overflow-hidden rounded-3xl">
+        <Image
+          src={hotel.thumbnail || "/placeholder.jpg"}
+          alt={hotel.name || "hotel"}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="w-full h-full object-cover rounded-t-3xl"
         />
       </div>

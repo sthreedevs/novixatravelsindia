@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { Globe, Headphones, Smartphone, X, Zap } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -269,19 +270,19 @@ const Esim = () => {
           </h1>
           <div className="my-10 flex flex-col gap-2 justify-between">
             <div className="flex-1 border rounded-sm flex gap-4 items-end">
-              <img src="/esim/form.gif" alt="fill-form" />
+              <Image src="/esim/form.gif" alt="fill-form" width={200} height={200} className="w-auto h-32 md:h-48 object-contain" />
               <h1 className="text-xl md:text-2xl lg:text-4xl py-2">
                 Fill the form and submit
               </h1>
             </div>
             <div className="flex-1 border rounded-sm flex gap-4 items-end">
-              <img src="/esim/payment.gif" alt="confirmation" />
+              <Image src="/esim/payment.gif" alt="confirmation" width={200} height={200} className="w-auto h-32 md:h-48 object-contain" />
               <h1 className="text-xl md:text-2xl lg:text-3xl py-2">
                 Recieve confirmation and payment link
               </h1>
             </div>
             <div className="flex-1 flex rounded-sm border gap-4 items-end">
-              <img src="/esim/email.gif" alt="qrcode" />
+              <Image src="/esim/email.gif" alt="qrcode" width={200} height={200} className="w-auto h-32 md:h-48 object-contain" />
               <h1 className="text-xl md:text-2xl lg:text-4xl py-4">
                 Get E-Sim QR code via email
               </h1>

@@ -11,24 +11,16 @@ import FormOverlay from "@/components/FormOverlay";
 import { setData } from "@/redux/destinationSlice";
 import axios from "axios";
 
-export function ClientLayout({ children }) {
+export function ClientLayout({ children, initialDestinations, initialPackages, initialOffers }) {
   const { modalForm, darkMode } = useSelector((state) => state.ui);
   const pathname = usePathname();
   const dispatch = useDispatch();
 
-  const fetchDestinations = async () => {
-    try {
-      // In Next.js, we can call our local API route
-      const response = await axios.get("/api/destination/");
-      dispatch(setData(response.data.data));
-    } catch (error) {
-      console.error("Error fetching destinations:", error);
-    }
-  };
-
   useEffect(() => {
-    fetchDestinations();
-  }, []);
+    if (initialDestinations) {
+      dispatch(setData(initialDestinations));
+    }
+  }, [initialDestinations, dispatch]);
 
   useEffect(() => {
     window.scrollTo({
@@ -40,10 +32,10 @@ export function ClientLayout({ children }) {
   return (
     <div className={`${darkMode ? "dark" : ""} dark:bg-black dark:text-zinc-200`}>
       <ToastContainer />
-      <Navbar />
+      <Navbar initialOffers={initialOffers} />
       {children}
       {modalForm && <FormOverlay />}
-      <Footer />
+      <Footer initialPackages={initialPackages} />
     </div>
   );
 }

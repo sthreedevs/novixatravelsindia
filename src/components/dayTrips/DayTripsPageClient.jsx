@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { toast } from "react-toastify";
 import axios from "axios";
 import {
@@ -106,9 +107,11 @@ export const DayTripsPageClient = ({ dayTripsData, initialGuides }) => {
                   Book Now
                 </Button>
               </div>
-              <img
-                src={trip.thumbnail}
-                alt={trip.title}
+              <Image
+                src={trip.thumbnail || "/placeholder.jpg"}
+                alt={trip.title || "thumbnail"}
+                width={800}
+                height={400}
                 className="w-full h-[30vh] sm:h-[40vh] object-cover rounded-md mb-3"
               />
               <p className="text-sm text-gray-600 mb-3">{trip.description}</p>

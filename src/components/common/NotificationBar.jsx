@@ -5,19 +5,14 @@ import Link from "next/link";
 
 import axios from "axios";
 
-const NotificationBar = () => {
-  const [offers, setOffers] = useState([]); // State to hold an array of offers
-
-  const fetchData = async () => {
-    const response = await axios.get("/api/navbarTop");
-    setOffers(
-      response.data.data?.filter((offer) => offer?.isActive === true) // Filter for active offers
-    );
-  };
+const NotificationBar = ({ initialOffers = [] }) => {
+  const [offers, setOffers] = useState(
+    initialOffers.filter((offer) => offer?.isActive === true)
+  );
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    setOffers(initialOffers.filter((offer) => offer?.isActive === true));
+  }, [initialOffers]);
 
   const handleClose = (index) => {
     setOffers((prevOffers) => prevOffers.filter((_, i) => i !== index)); // Remove offer from the list

@@ -30,6 +30,7 @@ export const transformPackageData = (backendPackages) => {
 
       grouped[category].content.push({
         _id: pkg._id,
+        slug: pkg.slug,
         title: pkg.title,
         image: pkg.thumbnail,
         description: pkg.description,

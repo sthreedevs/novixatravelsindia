@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Image from "next/image";
 import { FlipWords } from "@/components/ui/flip-words";
 import { Button } from "@/components/ui/button";
 import { FaCarSide, FaBusAlt, FaClock, FaRupeeSign } from "react-icons/fa";
@@ -274,10 +275,12 @@ const VehicleCard = ({ vehicle, index, handleFormModal }) => {
     >
       {/* Image */}
       <div className="relative h-56 overflow-hidden">
-        <img
-          src={vehicle.image}
-          alt={vehicle.name}
-          className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
+        <Image
+          src={vehicle.image || "/placeholder.jpg"}
+          alt={vehicle.name || "vehicle"}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-cover transform transition-transform duration-500 group-hover:scale-105"
         />
         <span className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
           {vehicle.type || "Available"}

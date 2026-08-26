@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
@@ -118,7 +119,7 @@ const placeholders = [
   "Discover hidden gems in Thailand",
 ];
 
-const Navbar = () => {
+const Navbar = ({ initialOffers }) => {
   const dispatch = useDispatch();
   const { data = [] } = useSelector((state) => state.destination);
   const router = useRouter();
@@ -226,7 +227,7 @@ const Navbar = () => {
       <div className="bg-white/90 dark:bg-black/90 px-4 lg:px-10 py-4 flex justify-between items-center border-b-2">
         {/* Logo & Menu */}
         <div className="flex items-center gap-4">
-          <img src="/logo.png" alt="logo" className="size-12 rounded-full" />
+          <Image src="/logo.png" alt="logo" className="size-12 rounded-full" width={48} height={48} priority />
           <div className="hidden lg:flex gap-4 text-sm font-medium">
             <div
               className="relative"
@@ -325,7 +326,7 @@ const Navbar = () => {
                           if (item.type === "hotel") {
                             link = `/services/hotels`;
                           } else if (item.type === "package") {
-                            link = `/services/packages/${item._id}`;
+                            link = `/services/packages/${item.slug || item._id}`;
                           } else if (item.type === "destination") {
                             link = `/destination/${encodeURIComponent(
                               item.name
@@ -405,7 +406,7 @@ const Navbar = () => {
                             if (item.type === "hotel")
                               link = `/services/hotels`;
                             else if (item.type === "package")
-                              link = `/services/packages/${item._id}`;
+                              link = `/services/packages/${item.slug || item._id}`;
                             else if (item.type === "destination")
                               link = `/destination/${encodeURIComponent(
                                 item.name
@@ -439,9 +440,10 @@ const Navbar = () => {
 
               {/* Nav Links */}
               <nav className="space-y-3">
-                {navItems.map((item) =>
+                {navItems.map((item, idx) =>
                   item.dropdown ? (
                     <Dropdown
+                      key={item.title || idx}
                       title={item.title}
                       items={item.dropdown.map((subItem) => ({
                         title: subItem.title,
@@ -487,7 +489,7 @@ const Navbar = () => {
           </div>
         )}
       </div>
-      <NotificationBar />
+      <NotificationBar initialOffers={initialOffers} />
     </div>
   );
 };
@@ -507,11 +509,13 @@ const ListItem = React.forwardRef(
             {...props}
           >
             <div className="flex items-center gap-4">
-              <div className="flex-[0.3] rounded-md overflow-hidden bg-zinc-100 p-2">
-                <img
-                  src={img}
+              <div className="flex-[0.3] rounded-md overflow-hidden bg-zinc-100 p-2 flex items-center justify-center">
+                <Image
+                  src={img || "/placeholder.png"}
                   alt={title}
-                  className="size-full rounded-md object-center"
+                  width={64}
+                  height={64}
+                  className="rounded-md object-cover w-full h-auto"
                   draggable={false}
                 />
               </div>

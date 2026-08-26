@@ -16,6 +16,7 @@ import { FaXTwitter } from "react-icons/fa6";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 
 import { useSelector } from "react-redux";
 
@@ -59,29 +60,15 @@ const socialIcons = [
   },
 ];
 
-const Footer = () => {
+const Footer = ({ initialPackages }) => {
   const [email, setEmail] = useState("");
-  const [topFourPackages, setTopFourPackages] = useState([]);
   const { data = [] } = useSelector((state) => state.destination);
 
   const destinations = Array.from(
     new Map(data.map((item) => [item.continent.toLowerCase(), item])).values(),
   ).slice(0, 4);
 
-  const fetchData = async () => {
-    try {
-      const packageRes = await axios.get("/api/package/");
-      const packageData = packageRes.data.data;
-      const topPackages = packageData?.slice(0, 4);
-      setTopFourPackages(topPackages);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const topFourPackages = initialPackages?.slice(0, 4) || [];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -109,10 +96,13 @@ const Footer = () => {
       <div className="w-full py-4 lg:py-4 sm:px-12 xl:px-20 sm:mx-auto flex flex-col xl:flex-row gap-6 sm:gap-4 items-center">
         <div className="flex-1 flex flex-col sm:flex-row justify-between sm:items-center mx-2 w-full">
           <div className="flex-[0.6] flex flex-row items-center gap-6 sm:gap-4">
-            <img
+            <Image
               src="/logo.png"
+              width={96}
+              height={96}
               className="size-24 sm:size-18 rounded-full border-2 border-zinc-300 dark:border-zinc-600 shadow-md"
               alt="Novixa Travels India Logo"
+              style={{ height: "auto" }}
             />
             <div className="space-y-1">
               <h3 className="text-lg font-bold sm:text-[22px]">
@@ -127,21 +117,30 @@ const Footer = () => {
               We Accept
             </h2>
             <div className="flex space-x-2 justify-start sm:space-x-1">
-              <img src="/footer/upi.svg" alt="UPI" className="h-8 rounded-sm" />
-              <img
+              <Image src="/footer/upi.svg" alt="UPI" width={80} height={32} className="h-8 rounded-sm" style={{ width: "auto" }} />
+              <Image
                 src="/footer/mc.png"
                 alt="MasterCard"
+                width={80}
+                height={32}
                 className="h-8 rounded-sm"
+                style={{ width: "auto" }}
               />
-              <img
+              <Image
                 src="/footer/amx.png"
                 alt="American"
+                width={80}
+                height={32}
                 className="h-8 rounded-sm"
+                style={{ width: "auto" }}
               />
-              <img
+              <Image
                 src="/footer/visa.png"
                 alt="Visa"
+                width={80}
+                height={32}
                 className="h-8 rounded-sm"
+                style={{ width: "auto" }}
               />
             </div>
           </div>
@@ -207,10 +206,10 @@ const Footer = () => {
               Top Travel Packages
             </h3>
             <ul className="space-y-2">
-              {topFourPackages.map(({ title, _id }, index) => (
+              {topFourPackages.map(({ title, _id, slug }, index) => (
                 <li key={index}>
                   <Link
-                    href={`/services/packages/${_id}`}
+                    href={`/services/packages/${slug || _id}`}
                     className="text-zinc-700 dark:text-zinc-300 hover:text-blue-500 dark:hover:text-[#BFA181] hover:underline transition-colors duration-200"
                   >
                     {title}

@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState, useMemo } from "react";
+import Image from "next/image";
 import Carousel from "@/components/common/Carousel";
 import { TracingBeam } from "@/components/ui/tracing-beam";
 import { Button } from "@/components/ui/button";
@@ -91,12 +92,12 @@ export const DestinationPageClient = ({ data, countryName }) => {
                   <p className="text-2xl font-bold mb-4">{item.title}</p>
                   <div className="text-sm prose prose-sm dark:prose-invert">
                     {item?.image && (
-                      <img
-                        src={item.image}
-                        alt="blog thumbnail"
-                        height="1000"
-                        width="1000"
-                        className="h-80 rounded-lg mb-10 object-cover"
+                      <Image
+                        src={item.image || "/placeholder.jpg"}
+                        alt={item.title || "thumbnail"}
+                        height={400}
+                        width={800}
+                        className="w-full h-80 rounded-lg mb-10 object-cover"
                       />
                     )}
                     {item.description}
@@ -189,10 +190,12 @@ const HotelCard = ({ hotel, handleFormModal }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <img
-        src={hotel.thumbnail}
-        alt={hotel.name}
-        className={`w-full h-full object-cover transform transition-all duration-500 ${
+      <Image
+        src={hotel.thumbnail || "/placeholder.jpg"}
+        alt={hotel.name || "hotel"}
+        fill
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        className={`object-cover transform transition-all duration-500 ${
           isHovered ? "scale-110" : ""
         }`}
       />
@@ -231,10 +234,12 @@ const PackageCard = ({ packageData, router }) => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="relative h-52 overflow-hidden pointer-events-none">
-        <img
-          src={packageData.thumbnail}
-          alt={packageData.title}
-          className={`w-full h-full object-cover transform transition-transform duration-500 ${
+        <Image
+          src={packageData.thumbnail || "/placeholder.jpg"}
+          alt={packageData.title || "package"}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className={`object-cover transform transition-transform duration-500 ${
             isHovered ? "scale-105" : ""
           }`}
         />
@@ -260,7 +265,7 @@ const PackageCard = ({ packageData, router }) => {
         </p>
         <Button
           className="mt-2"
-          onClick={() => router.push(`/services/packages/${packageData._id}`)}
+          onClick={() => router.push(`/services/packages/${packageData.slug || packageData._id}`)}
         >
           View Details
         </Button>

@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -320,9 +321,11 @@ const PopularRouteCard = ({ from, to, duration, image }) => {
       }}
       viewport={{ once: true }}
     >
-      <img
-        src={image}
+      <Image
+        src={image || "/placeholder.jpg"}
         alt={`${from} to ${to}`}
+        width={400}
+        height={256}
         className="w-full h-64 object-cover"
       />
 

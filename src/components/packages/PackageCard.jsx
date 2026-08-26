@@ -35,7 +35,7 @@ export const PackageCard = ({ data }) => {
             {data.description}
           </p>
           <Button
-            onClick={() => router.push(`/services/packages/${data._id}`)}
+            onClick={() => router.push(`/services/packages/${data.slug || data._id}`)}
             variant="outline"
             className="cursor-pointer"
           >

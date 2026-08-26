@@ -27,6 +27,28 @@ export async function getPackageById(id) {
   }
 }
 
+export async function getPackageBySlug(slug) {
+  try {
+    await connectDB();
+
+    const packageData = await Package.findOne({ slug })
+      .populate("carouselData")
+      .populate("timeline")
+      .lean();
+
+    if (!packageData) {
+      // Fallback to ID in case a URL still uses an ID
+      return await getPackageById(slug);
+    }
+
+    return JSON.parse(JSON.stringify(packageData));
+  } catch (error) {
+    console.error("Error fetching package by slug:", error);
+    // Fallback to ID on error just in case
+    return await getPackageById(slug);
+  }
+}
+
 export async function getPackagesPageData() {
   await connectDB();
 
@@ -42,4 +64,15 @@ export async function getPackagesPageData() {
     carouselData,
     packageData: packages,
   }));
+}
+
+export async function getAllPackages() {
+  try {
+    await connectDB();
+    const packages = await Package.find().sort({ createdAt: -1 }).lean();
+    return JSON.parse(JSON.stringify(packages));
+  } catch (error) {
+    console.error("Error fetching packages:", error);
+    return [];
+  }
 }

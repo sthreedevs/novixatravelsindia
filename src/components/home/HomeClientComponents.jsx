@@ -2,6 +2,7 @@
 
 import React, { useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ChevronLeft, ChevronRight, ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { toTitleCase } from "@/lib/utils";
 
@@ -11,10 +12,12 @@ export const TestimonialCard = ({ index, data }) => (
     className="bg-zinc-100 border border-gray-200 shadow-md h-fit min-w-xs max-w-sm rounded-xl p-6 animate-scroll"
   >
     <div className="flex items-center gap-4 mb-4">
-      <img
-        src={data.image}
-        alt={data.name}
-        className="w-12 h-12 rounded-full object-cover"
+      <Image
+        src={data.image || "/placeholder.jpg"}
+        alt={data.name || "Testimonial"}
+        width={48}
+        height={48}
+        className="rounded-full object-cover"
       />
       <div>
         <h4 className="text-md font-semibold text-gray-800">{data.name}</h4>
@@ -31,11 +34,13 @@ export const DestinationCard = ({ data }) => {
   return (
     <Link href={`/destination/${data.name}`}>
       <div className="relative max-w-md border-2 border-opacity-50 rounded-xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 ease-out transform-gpu hover:-translate-y-2">
-        <div className="overflow-hidden rounded-lg border-2 border-opacity-30">
-          <img
-            src={data.thumbnail}
-            alt={data.name}
-            className="w-full h-72 object-cover transform hover:scale-110 transition-transform duration-500 ease-in-out"
+        <div className="relative overflow-hidden rounded-lg border-2 border-opacity-30 h-72">
+          <Image
+            src={data.thumbnail || "/placeholder.jpg"}
+            alt={data.name || "Destination"}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover transform hover:scale-110 transition-transform duration-500 ease-in-out"
           />
           <div className="absolute inset-0 bg-black/20 flex flex-col justify-between p-4 transition-opacity duration-300 hover:bg-opacity-20">
             <h1 className="text-2xl font-semibold tracking-wide leading-tight text-white">
@@ -91,11 +96,15 @@ export const TrendingPackages = ({ packages = [] }) => {
               key={pkg._id}
               className="flex-shrink-0 bg-[#141414] rounded-3xl w-[80%] sm:w-[280px] md:w-[320px] lg:w-[350px] shadow-md border border-gray-800 hover:scale-[1.03] transition-transform duration-300 ease-in-out snap-start"
             >
-              <img
-                src={pkg.thumbnail}
-                alt={pkg.title}
-                className="rounded-t-3xl w-full h-56 object-cover"
-              />
+              <div className="relative w-full h-56">
+                <Image
+                  src={pkg.thumbnail || "/placeholder.jpg"}
+                  alt={pkg.title || "Package"}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="rounded-t-3xl object-cover"
+                />
+              </div>
               <div className="p-5 text-center">
                 <h3 className="text-xl md:text-2xl font-bold text-[#bba477] mb-3 capitalize">
                   {pkg.title}
@@ -111,7 +120,7 @@ export const TrendingPackages = ({ packages = [] }) => {
                  Starting From ₹{pkg.domesticPrice}
                 </p>
                 <Link
-                  href={`/services/packages/${pkg._id}`}
+                  href={`/services/packages/${pkg.slug || pkg._id}`}
                   className="block bg-[#bba477] hover:bg-[#cbb982] text-black font-semibold rounded-xl px-6 py-2 w-full text-center"
                 >
                   View Details
@@ -162,9 +171,11 @@ export const BlogCarousel = ({ blogs = [] }) => {
               key={idx}
               className="min-w-[320px] md:min-w-[600px] relative rounded-xl overflow-hidden group"
             >
-              <img
-                src={blog?.thumbnail}
-                alt={blog?.title}
+              <Image
+                src={blog?.thumbnail || "/placeholder.jpg"}
+                alt={blog?.title || "Blog Post"}
+                width={600}
+                height={400}
                 className="w-full h-[400px] object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col justify-end p-6">

@@ -1,34 +1,16 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-
-import axios from "axios";
+import React from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { verifySubscriber } from "@/lib/services/subscriber.service.js";
 
-const VerifySubscriber = () => {
-  const { token } = useParams();
-  const [status, setStatus] = useState("verifying"); // verifying | success | failed
-
-  useEffect(() => {
-    const verifyEmail = async () => {
-      try {
-        await axios.get(`/api/subscriber/verify/${token}`);
-        setStatus("success");
-      } catch (error) {
-        setStatus("failed");
-      }
-    };
-
-    verifyEmail();
-  }, [token]);
+const VerifySubscriber = async ({ params }) => {
+  const { token } = params;
+  
+  const isVerified = await verifySubscriber(token);
+  const status = isVerified ? "success" : "failed";
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white px-4">
       <div className="max-w-md text-center">
-        {status === "verifying" && (
-          <p className="text-lg">Verifying your email...</p>
-        )}
-
         {status === "success" && (
           <>
             <FaCheckCircle size={60} className="mx-auto text-green-500 mb-4" />

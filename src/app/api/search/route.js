@@ -33,9 +33,11 @@ export async function GET(request) {
       })),
       ...packages.map((p) => ({
         type: "package",
-        name: p.name,
+        name: p.name || p.title,
         country: p.country,
-        url: `/services/packages/${p._id}`,
+        slug: p.slug,
+        _id: p._id,
+        url: `/services/packages/${p.slug || p._id}`,
       })),
       ...hotels.map((h) => ({
         type: "hotel",

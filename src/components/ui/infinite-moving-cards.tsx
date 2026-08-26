@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 
 export const InfiniteMovingCards = ({
   items,
@@ -106,10 +107,12 @@ export const InfiniteMovingCards = ({
 const PartnersCard = ({ item }) => {
   return (
     <div className="flex items-center justify-center text-center gap-2 px-4 py-2 m-auto">
-      <img
-        src={item?.image}
+      <Image
+        src={item?.image || "/placeholder.jpg"}
         alt="logo"
-        className="max-h-8 object-cover object-bottom m-auto"
+        width={100}
+        height={32}
+        className="max-h-8 w-auto object-cover object-bottom m-auto"
       />
     </div>
   );

@@ -2,6 +2,7 @@
 import axios from "axios";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export const SingleBlogPageClient = ({ initialBlog, recentBlogs }) => {
@@ -45,10 +46,12 @@ export const SingleBlogPageClient = ({ initialBlog, recentBlogs }) => {
       <div className="flex flex-col md:flex-row md:items-start gap-6 mb-12">
         {/* Left: Main Blog Header */}
         <div className="relative w-full md:w-4/5 h-[18rem] md:h-[30rem] rounded-2xl overflow-hidden shadow-lg">
-          <img
-            src={blog?.thumbnail}
-            alt={blog?.title}
-            className="w-full h-full object-cover"
+          <Image
+            src={blog?.thumbnail || "/placeholder.jpg"}
+            alt={blog?.title || "thumbnail"}
+            fill
+            sizes="(max-width: 768px) 100vw, 80vw"
+            className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
 
@@ -72,9 +75,11 @@ export const SingleBlogPageClient = ({ initialBlog, recentBlogs }) => {
             >
               {/* Thumbnail */}
               <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden">
-                <img
-                  src={recent?.thumbnail}
-                  alt={recent?.title}
+                <Image
+                  src={recent?.thumbnail || "/placeholder.jpg"}
+                  alt={recent?.title || "thumbnail"}
+                  width={64}
+                  height={64}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -130,9 +135,11 @@ export const SingleBlogPageClient = ({ initialBlog, recentBlogs }) => {
             {/* Section Image */}
             {section?.image && (
               <div className="w-full md:w-4/6 h-72 md:h-80 rounded-lg overflow-hidden shadow-md">
-                <img
-                  src={section?.image}
-                  alt={section?.title}
+                <Image
+                  src={section?.image || "/placeholder.jpg"}
+                  alt={section?.title || "section image"}
+                  width={800}
+                  height={400}
                   className="w-full h-full object-cover hover:scale-[1.03] transition-transform duration-300"
                 />
               </div>

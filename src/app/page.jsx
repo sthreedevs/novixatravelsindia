@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   BadgeDollarSign,
   MousePointer,
@@ -156,7 +157,7 @@ export default async function Home() {
               {/* <!-- Center icon --> */}
               <div className="relative z-10 flex items-center justify-center w-full h-full rounded-full bg-white shadow-md">
                 {/* <!-- Replace this with your SVG --> */}
-                <img src="./logo.png" alt="logo" className="h-96" />
+                <Image src="/logo.png" alt="logo" width={384} height={384} className="h-96 w-auto" />
               </div>
             </div>
           </div>

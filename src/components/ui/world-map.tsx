@@ -1,6 +1,7 @@
 "use client";
 import { useRef } from "react";
 import { motion } from "motion/react";
+import Image from "next/image";
 import DottedMap from "dotted-map";
 import { worldMapBase64 } from "@/lib/utils";
 
@@ -33,14 +34,12 @@ export function WorldMap({ dots = [], lineColor = "#0ea5e9" }: MapProps) {
 
   return (
     <div className="w-full aspect-[2/1] dark:bg-black bg-white rounded-lg  relative font-sans">
-      <img
+      <Image
         src={worldMapBase64}
         className="h-full w-full [mask-img:linear-gradient(to_bottom,transparent,white_10%,white_90%,transparent)] pointer-events-none select-none"
         alt="world map"
-        height="495"
-        width="1056"
-        loading="lazy"
-        decoding="async"
+        height={495}
+        width={1056}
         draggable={false}
       />
       <svg
