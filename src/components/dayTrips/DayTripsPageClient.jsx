@@ -50,7 +50,7 @@ export const DayTripsPageClient = ({ dayTripsData, initialGuides }) => {
   const getLocation = async () => {
     try {
       const response = await axios.get(
-        "https://geolocation.onetrust.com/cookieconsentpub/v1/geo/location"
+        "https://geolocation.onetrust.com/cookieconsentpub/v1/geo/location",
       );
       setLocation(response.data);
     } catch (e) {
@@ -192,7 +192,12 @@ export const DayTripsPageClient = ({ dayTripsData, initialGuides }) => {
         </Accordion>
       </div>
       {modal && (
-        <ModalForm location={location} tripData={modal} setModal={setModal} initialGuides={initialGuides} />
+        <ModalForm
+          location={location}
+          tripData={modal}
+          setModal={setModal}
+          initialGuides={initialGuides}
+        />
       )}
     </div>
   );
@@ -203,7 +208,7 @@ const ModalForm = ({ tripData, setModal, location, initialGuides }) => {
   const [finalAmount, setFinalAmount] = useState(
     location && location.country === "IN"
       ? Number(tripData.domesticPrice)
-      : Number(tripData.internationalPrice)
+      : Number(tripData.internationalPrice),
   );
   const [data, setData] = useState({
     dayTrip: tripData?._id || "",
@@ -243,8 +248,8 @@ const ModalForm = ({ tripData, setModal, location, initialGuides }) => {
         type === "checkbox"
           ? checked
           : type === "file"
-          ? [...files]
-          : sanitizedValue,
+            ? [...files]
+            : sanitizedValue,
     };
 
     setData(updatedData);
@@ -264,7 +269,7 @@ const ModalForm = ({ tripData, setModal, location, initialGuides }) => {
 
       if (updatedData.needGuide) {
         const selectedGuide = guides.find(
-          (guide) => guide.language === updatedData.languagePreference
+          (guide) => guide.language === updatedData.languagePreference,
         );
         if (selectedGuide) {
           guideAmount =
@@ -324,7 +329,9 @@ const ModalForm = ({ tripData, setModal, location, initialGuides }) => {
       formData.append("paymentStatus", "pending");
       formData.append("paymentId", "");
 
-      await import("@/lib/actions/enquiry.js").then((m) => m.submitEnquiry("dayTrip", formData));
+      await import("@/lib/actions/enquiry.js").then((m) =>
+        m.submitEnquiry("dayTrip", formData),
+      );
 
       toast.success("Booking submitted for payment at pickup!");
       setModal(null);
@@ -357,13 +364,13 @@ const ModalForm = ({ tripData, setModal, location, initialGuides }) => {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
-      const { id: order_id, amount, currency } = orderRes.data;
+      const { orderId: order_id, amount, currency } = orderRes.data;
 
       const options = {
-        key: "rzp_live_hgu6JJkhvITzhB",
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount,
         currency,
         order_id,
@@ -383,7 +390,9 @@ const ModalForm = ({ tripData, setModal, location, initialGuides }) => {
           formData.append("paymentStatus", "success");
           formData.append("paymentId", response.razorpay_payment_id);
 
-          await import("@/lib/actions/enquiry.js").then((m) => m.submitEnquiry("dayTrip", formData));
+          await import("@/lib/actions/enquiry.js").then((m) =>
+            m.submitEnquiry("dayTrip", formData),
+          );
           toast.success("Payment Successful! Booking Confirmed");
           setModal(null);
           await axios.post(
@@ -395,7 +404,7 @@ const ModalForm = ({ tripData, setModal, location, initialGuides }) => {
               headers: {
                 "Content-Type": "application/json",
               },
-            }
+            },
           );
         },
         prefill: {
@@ -417,8 +426,6 @@ const ModalForm = ({ tripData, setModal, location, initialGuides }) => {
       setIsLoading(false);
     }
   };
-
-
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex flex-col items-center justify-center">
