@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { createDestination } from "@/lib/actions/admin/destinations.actions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 
@@ -62,6 +63,11 @@ export default function NewDestinationPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.name || !formData.country || !thumbnail) {
+      return toast.error("Please provide Name, Country, and Thumbnail.");
+    }
+
     setLoading(true);
 
     try {
@@ -113,27 +119,36 @@ export default function NewDestinationPage() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create New Destination</h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="space-y-8">
         
+        <div className="my-2">
+        <Tabs defaultValue="general" className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="general">General Details</TabsTrigger>
+            <TabsTrigger value="descriptions">Descriptions</TabsTrigger>
+            <TabsTrigger value="gallery">Gallery</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="general">
         {/* Basic Info */}
         <div className="bg-white dark:bg-zinc-900 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-zinc-800 space-y-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white border-b pb-2">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium mb-1">Destination Name *</label>
-              <Input required name="name" value={formData.name} onChange={handleTextChange} placeholder="E.g. Kerala" />
+              <Input name="name" value={formData.name} onChange={handleTextChange} placeholder="e.g. Munnar" />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Country *</label>
-              <Input required name="country" value={formData.country} onChange={handleTextChange} placeholder="India" />
+              <Input name="country" value={formData.country} onChange={handleTextChange} placeholder="e.g. India" />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Continent *</label>
-              <Input required name="continent" value={formData.continent} onChange={handleTextChange} placeholder="Asia" />
+              <Input name="continent" value={formData.continent} onChange={handleTextChange} placeholder="e.g. Asia" />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Tags (comma separated) *</label>
-              <Input required name="tags" value={formData.tags} onChange={handleTextChange} placeholder="Hills, Nature" />
+              <Input name="tags" value={formData.tags} onChange={handleTextChange} placeholder="Hills, Nature" />
             </div>
           </div>
           
@@ -150,10 +165,12 @@ export default function NewDestinationPage() {
           
           <div>
             <label className="block text-sm font-medium mb-1">Thumbnail Image *</label>
-            <Input type="file" required onChange={(e) => setThumbnail(e.target.files[0])} accept="image/*" />
+            <Input type="file" onChange={(e) => setThumbnail(e.target.files[0])} accept="image/*" />
           </div>
         </div>
+        </TabsContent>
 
+        <TabsContent value="descriptions">
         {/* Descriptions & Highlights */}
         <div className="bg-white dark:bg-zinc-900 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-zinc-800 space-y-6">
           <div className="flex items-center justify-between border-b pb-2">
@@ -173,7 +190,7 @@ export default function NewDestinationPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1">Section Title *</label>
-                  <Input required value={desc.title} onChange={(e) => handleDescChange(index, 'title', e.target.value)} placeholder="About Kerala" />
+                  <Input value={desc.title} onChange={(e) => handleDescChange(index, 'title', e.target.value)} placeholder="About Kerala" />
                 </div>
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1">Content</label>
@@ -197,7 +214,7 @@ export default function NewDestinationPage() {
                   {desc.highlights.map((hl, hIndex) => (
                     <div key={hIndex} className="flex gap-2 items-start bg-white dark:bg-zinc-900 p-3 rounded border border-gray-200 dark:border-zinc-700 relative">
                       <div className="flex-1 space-y-2">
-                        <Input required value={hl.title} onChange={(e) => handleHighlightChange(index, hIndex, 'title', e.target.value)} placeholder="Highlight Title" className="h-8 text-sm" />
+                        <Input value={hl.title} onChange={(e) => handleHighlightChange(index, hIndex, 'title', e.target.value)} placeholder="Highlight Title" className="h-8 text-sm" />
                         <Input value={hl.description} onChange={(e) => handleHighlightChange(index, hIndex, 'description', e.target.value)} placeholder="Highlight Description (optional)" className="h-8 text-sm" />
                       </div>
                       <button type="button" onClick={() => removeHighlight(index, hIndex)} className="text-red-400 hover:text-red-600 mt-1">
@@ -212,7 +229,9 @@ export default function NewDestinationPage() {
             </div>
           ))}
         </div>
+        </TabsContent>
 
+        <TabsContent value="gallery">
         {/* Carousel Images */}
         <div className="bg-white dark:bg-zinc-900 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-zinc-800 space-y-6">
           <div className="flex items-center justify-between border-b pb-2">
@@ -231,7 +250,7 @@ export default function NewDestinationPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Image *</label>
-                  <Input type="file" required onChange={(e) => handleCarouselChange(index, 'image', e.target.files[0])} accept="image/*" />
+                  <Input type="file" onChange={(e) => handleCarouselChange(index, 'image', e.target.files[0])} accept="image/*" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Title</label>
@@ -249,13 +268,16 @@ export default function NewDestinationPage() {
             </div>
           ))}
         </div>
+        </TabsContent>
+        </Tabs>
+        </div>
 
         <div className="flex justify-end pt-4 pb-12">
-          <Button type="submit" disabled={loading} className="bg-[#BFA181] hover:bg-[#a68c70] text-black px-8">
+          <Button type="button" onClick={handleSubmit} disabled={loading} className="bg-[#BFA181] hover:bg-[#a68c70] text-black px-8">
             {loading ? "Creating..." : "Create Destination"}
           </Button>
         </div>
-      </form>
+      </div>
     </div>
   );
 }

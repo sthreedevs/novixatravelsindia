@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { updateBlog } from "@/lib/actions/admin/blogs.actions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 
@@ -40,6 +41,9 @@ export default function EditBlogClient({ blog }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.title || !formData.author || !formData.readTime) {
+      return toast.error("Please provide Title, Author, and Read Time.");
+    }
     setLoading(true);
 
     try {
@@ -83,23 +87,31 @@ export default function EditBlogClient({ blog }) {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Edit Blog</h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="space-y-8">
         
+        <div className="my-2">
+        <Tabs defaultValue="general" className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="general">General Details</TabsTrigger>
+            <TabsTrigger value="content">Content Blocks</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="general">
         {/* Basic Info */}
         <div className="bg-white dark:bg-zinc-900 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-zinc-800 space-y-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white border-b pb-2">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
               <label className="block text-sm font-medium mb-1">Blog Title *</label>
-              <Input required name="title" value={formData.title} onChange={handleTextChange} />
+              <Input name="title" value={formData.title} onChange={handleTextChange} />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Author *</label>
-              <Input required name="author" value={formData.author} onChange={handleTextChange} />
+              <Input name="author" value={formData.author} onChange={handleTextChange} />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Read Time *</label>
-              <Input required name="readTime" value={formData.readTime} onChange={handleTextChange} />
+              <Input name="readTime" value={formData.readTime} onChange={handleTextChange} />
             </div>
             <div className="md:col-span-2">
               <label className="block text-sm font-medium mb-1">Tags (comma separated)</label>
@@ -115,7 +127,9 @@ export default function EditBlogClient({ blog }) {
             <Input type="file" onChange={(e) => setThumbnail(e.target.files[0])} accept="image/*" />
           </div>
         </div>
+        </TabsContent>
 
+        <TabsContent value="content">
         {/* Content Blocks */}
         <div className="bg-white dark:bg-zinc-900 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-zinc-800 space-y-6">
           <div className="flex items-center justify-between border-b pb-2">
@@ -135,11 +149,11 @@ export default function EditBlogClient({ blog }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1">Section Title *</label>
-                  <Input required value={sec.title} onChange={(e) => handleContentChange(index, 'title', e.target.value)} />
+                  <Input value={sec.title} onChange={(e) => handleContentChange(index, 'title', e.target.value)} />
                 </div>
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1">Text Content *</label>
-                  <textarea required value={sec.description} onChange={(e) => handleContentChange(index, 'description', e.target.value)} className="w-full p-3 rounded-md border border-gray-300 dark:border-zinc-700 bg-transparent text-sm h-32" />
+                  <textarea value={sec.description} onChange={(e) => handleContentChange(index, 'description', e.target.value)} className="w-full p-3 rounded-md border border-gray-300 dark:border-zinc-700 bg-transparent text-sm h-32" />
                 </div>
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1">Section Image (optional)</label>
@@ -150,13 +164,16 @@ export default function EditBlogClient({ blog }) {
             </div>
           ))}
         </div>
+        </TabsContent>
+        </Tabs>
+        </div>
 
         <div className="flex justify-end pt-4 pb-12">
-          <Button type="submit" disabled={loading} className="bg-[#BFA181] hover:bg-[#a68c70] text-black px-8">
+          <Button type="button" onClick={handleSubmit} disabled={loading} className="bg-[#BFA181] hover:bg-[#a68c70] text-black px-8">
             {loading ? "Updating..." : "Update Blog"}
           </Button>
         </div>
-      </form>
+      </div>
     </div>
   );
 }
