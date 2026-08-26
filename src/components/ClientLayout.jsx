@@ -29,13 +29,15 @@ export function ClientLayout({ children, initialDestinations, initialPackages, i
     });
   }, [pathname]);
 
+  const isAdminRoute = pathname.startsWith("/admin");
+
   return (
     <div className={`${darkMode ? "dark" : ""} dark:bg-black dark:text-zinc-200`}>
       <ToastContainer />
-      <Navbar initialOffers={initialOffers} />
+      {!isAdminRoute && <Navbar initialOffers={initialOffers} />}
       {children}
       {modalForm && <FormOverlay />}
-      <Footer initialPackages={initialPackages} />
+      {!isAdminRoute && <Footer initialPackages={initialPackages} />}
     </div>
   );
 }
