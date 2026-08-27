@@ -74,8 +74,8 @@ export async function submitEnquiry(type, formData) {
     // Send emails
     if (newEnquiry && data.email) {
       // Background email sending to avoid blocking response
-      sendCreatedEnquiry(data.email, newEnquiry._id).catch(console.error);
-      sendEnquiryNotificationToAdmin({
+      await sendCreatedEnquiry(data.email, newEnquiry._id).catch(console.error);
+      await sendEnquiryNotificationToAdmin({
         enquiryType: `${type.charAt(0).toUpperCase() + type.slice(1)} Enquiry`,
         enquiryId: newEnquiry._id,
       }).catch(console.error);

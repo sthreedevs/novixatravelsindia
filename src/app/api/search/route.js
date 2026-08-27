@@ -9,7 +9,7 @@ export async function GET(request) {
   try {
     await connectDB();
     const searchParams = request.nextUrl.searchParams;
-    const q = searchParams.get("q");
+    const q = searchParams.get("q") || searchParams.get("keyword");
 
     if (!q) {
       return NextResponse.json({ error: "Query string is required" }, { status: 400 });
@@ -52,7 +52,7 @@ export async function GET(request) {
       })),
     ];
 
-    return NextResponse.json({ success: true, data: results }, { status: 200 });
+    return NextResponse.json({ success: true, results }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

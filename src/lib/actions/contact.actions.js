@@ -18,7 +18,7 @@ export async function submitContactForm(data) {
 
     // 4. Send email notification
     if (newContact) {
-      sendEnquiryNotificationToAdmin({
+      await sendEnquiryNotificationToAdmin({
         enquiryType: "Contact Us Message",
         enquiryId: newContact._id,
       }).catch(console.error);
