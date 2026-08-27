@@ -41,9 +41,12 @@ export async function updateTestimonial(id, formData) {
 
     const imageFile = formData.get("image");
     let imageUrl = testimonial.image;
+    if (formData.get("removeImage") === "true") {
+      imageUrl = "";
+    }
     if (imageFile && imageFile.size > 0) {
       const uploadRes = await uploadOnCloudinary(imageFile);
-      imageUrl = uploadRes?.secure_url || testimonial.image;
+      imageUrl = uploadRes?.secure_url || imageUrl;
     }
 
     await Testimonial.findByIdAndUpdate(id, {

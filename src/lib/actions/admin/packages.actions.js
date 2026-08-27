@@ -147,9 +147,12 @@ export async function updatePackage(id, formData) {
     // 1. Upload thumbnail
     const thumbnailFile = formData.get("thumbnail");
     let thumbnailUrl = pkg.thumbnail;
+    if (formData.get("removeThumbnail") === "true") {
+      thumbnailUrl = "";
+    }
     if (thumbnailFile && thumbnailFile.size > 0) {
       const uploadRes = await uploadOnCloudinary(thumbnailFile);
-      thumbnailUrl = uploadRes?.secure_url || pkg.thumbnail;
+      thumbnailUrl = uploadRes?.secure_url || thumbnailUrl;
     }
 
     // 2. Extract arrays

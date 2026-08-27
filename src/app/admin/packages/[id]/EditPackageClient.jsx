@@ -27,7 +27,8 @@ export default function EditPackageClient({ pkg }) {
     tags: pkg.tags ? pkg.tags.join(", ") : "", 
     category: pkg.category ? pkg.category.join(", ") : "", 
     inclusions: pkg.inclusions ? pkg.inclusions.join(", ") : "", 
-    exclusions: pkg.exclusions ? pkg.exclusions.join(", ") : ""
+    exclusions: pkg.exclusions ? pkg.exclusions.join(", ") : "",
+    removeThumbnail: "false"
   });
   
   const [thumbnail, setThumbnail] = useState(null);
@@ -85,10 +86,11 @@ export default function EditPackageClient({ pkg }) {
       Object.keys(formData).forEach(key => data.append(key, formData[key]));
       
       if (thumbnail) data.append("thumbnail", thumbnail);
+      if (formData.removeThumbnail === "true") data.append("removeThumbnail", "true");
 
       // We pass the JSON structure back so the action knows what to update/create
       const timelinesData = timelines.map(tl => ({
-        _id: tl._id, dayTitle: tl.dayTitle, description: tl.description
+        _id: tl._id, dayTitle: tl.dayTitle, description: tl.description, image1: tl.image1, image2: tl.image2
       }));
       data.append("timelinesData", JSON.stringify(timelinesData));
       
@@ -98,7 +100,7 @@ export default function EditPackageClient({ pkg }) {
       });
 
       const carouselsData = carousels.map(c => ({
-        _id: c._id, title: c.title, description: c.description, buttonText: c.buttonText
+        _id: c._id, title: c.title, description: c.description, buttonText: c.buttonText, image: c.image
       }));
       data.append("carouselsData", JSON.stringify(carouselsData));
       
@@ -227,10 +229,13 @@ export default function EditPackageClient({ pkg }) {
               
               <div>
                 <label className="block text-sm font-medium mb-1">Thumbnail Image (Upload new to replace)</label>
-                {pkg.thumbnail && (
-                  <img src={pkg.thumbnail} alt="thumbnail" className="h-20 w-20 object-cover rounded mb-2" />
+                {pkg.thumbnail && formData.removeThumbnail === "false" && (
+                  <div className="relative inline-block mb-2">
+                    <img src={pkg.thumbnail} alt="thumbnail" className="h-20 w-20 object-cover rounded" />
+                    <button type="button" onClick={() => setFormData(p => ({...p, removeThumbnail: "true"}))} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"><Trash2 className="w-3 h-3" /></button>
+                  </div>
                 )}
-                <Input type="file" onChange={(e) => setThumbnail(e.target.files[0])} accept="image/*" />
+                <Input type="file" onChange={(e) => {setThumbnail(e.target.files[0]); setFormData(p => ({...p, removeThumbnail: "false"}));}} accept="image/*" />
               </div>
             </div>
           </TabsContent>
@@ -271,13 +276,23 @@ export default function EditPackageClient({ pkg }) {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Image 1</label>
-                  {tl.image1 && <img src={tl.image1} alt="" className="h-12 w-12 object-cover rounded mb-1" />}
-                  <Input type="file" onChange={(e) => handleTimelineChange(index, 'file1', e.target.files[0])} accept="image/*" />
+                  {tl.image1 && (
+                    <div className="relative inline-block mb-1">
+                      <img src={tl.image1} alt="" className="h-12 w-12 object-cover rounded" />
+                      <button type="button" onClick={() => handleTimelineChange(index, 'image1', "")} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"><Trash2 className="w-3 h-3" /></button>
+                    </div>
+                  )}
+                  <Input type="file" onChange={(e) => {handleTimelineChange(index, 'file1', e.target.files[0]); handleTimelineChange(index, 'image1', "");}} accept="image/*" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Image 2</label>
-                  {tl.image2 && <img src={tl.image2} alt="" className="h-12 w-12 object-cover rounded mb-1" />}
-                  <Input type="file" onChange={(e) => handleTimelineChange(index, 'file2', e.target.files[0])} accept="image/*" />
+                  {tl.image2 && (
+                    <div className="relative inline-block mb-1">
+                      <img src={tl.image2} alt="" className="h-12 w-12 object-cover rounded" />
+                      <button type="button" onClick={() => handleTimelineChange(index, 'image2', "")} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"><Trash2 className="w-3 h-3" /></button>
+                    </div>
+                  )}
+                  <Input type="file" onChange={(e) => {handleTimelineChange(index, 'file2', e.target.files[0]); handleTimelineChange(index, 'image2', "");}} accept="image/*" />
                 </div>
               </div>
             </div>
@@ -309,8 +324,13 @@ export default function EditPackageClient({ pkg }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Image</label>
-                  {c.image && <img src={c.image} alt="" className="h-12 w-12 object-cover rounded mb-1" />}
-                  <Input type="file" onChange={(e) => handleCarouselChange(index, 'file', e.target.files[0])} accept="image/*" />
+                  {c.image && (
+                    <div className="relative inline-block mb-1">
+                      <img src={c.image} alt="" className="h-12 w-12 object-cover rounded" />
+                      <button type="button" onClick={() => handleCarouselChange(index, 'image', "")} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"><Trash2 className="w-3 h-3" /></button>
+                    </div>
+                  )}
+                  <Input type="file" onChange={(e) => {handleCarouselChange(index, 'file', e.target.files[0]); handleCarouselChange(index, 'image', "");}} accept="image/*" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Title</label>

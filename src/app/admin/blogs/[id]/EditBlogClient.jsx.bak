@@ -12,7 +12,6 @@ import Link from "next/link";
 export default function EditBlogClient({ blog }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
     title: blog.title || "", 
     author: blog.author || "", 
     readTime: blog.readTime || "", 

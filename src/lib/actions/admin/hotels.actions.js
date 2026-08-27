@@ -54,6 +54,9 @@ export async function updateHotel(id, formData) {
     // 1. Upload thumbnail
     const thumbnailFile = formData.get("thumbnail");
     let thumbnailUrl = hotel.thumbnail;
+    if (formData.get("removeThumbnail") === "true") {
+      thumbnailUrl = "";
+    }
     if (thumbnailFile && thumbnailFile.size > 0) {
       const uploadRes = await uploadOnCloudinary(thumbnailFile);
       thumbnailUrl = uploadRes?.secure_url || hotel.thumbnail;

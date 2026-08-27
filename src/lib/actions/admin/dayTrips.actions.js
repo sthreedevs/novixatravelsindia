@@ -52,6 +52,9 @@ export async function updateDayTrip(id, formData) {
 
     const thumbnailFile = formData.get("thumbnail");
     let thumbnailUrl = dayTrip.thumbnail;
+    if (formData.get("removeThumbnail") === "true") {
+      thumbnailUrl = "";
+    }
     if (thumbnailFile && thumbnailFile.size > 0) {
       const uploadRes = await uploadOnCloudinary(thumbnailFile);
       thumbnailUrl = uploadRes?.secure_url || dayTrip.thumbnail;

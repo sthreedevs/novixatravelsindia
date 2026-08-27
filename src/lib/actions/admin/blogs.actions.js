@@ -74,6 +74,9 @@ export async function updateBlog(id, formData) {
     // 1. Upload thumbnail
     const thumbnailFile = formData.get("thumbnail");
     let thumbnailUrl = blog.thumbnail;
+    if (formData.get("removeThumbnail") === "true") {
+      thumbnailUrl = "";
+    }
     if (thumbnailFile && thumbnailFile.size > 0) {
       const uploadRes = await uploadOnCloudinary(thumbnailFile);
       thumbnailUrl = uploadRes?.secure_url || blog.thumbnail;

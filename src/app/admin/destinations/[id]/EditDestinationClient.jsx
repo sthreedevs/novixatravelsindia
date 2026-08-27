@@ -19,7 +19,8 @@ export default function EditDestinationClient({ destination }) {
     continent: destination.continent || "", 
     tags: destination.tags ? destination.tags.join(", ") : "",
     isTrendingIndian: destination.isTrendingIndian || false, 
-    isTrendingInternational: destination.isTrendingInternational || false
+    isTrendingInternational: destination.isTrendingInternational || false,
+    removeThumbnail: "false"
   });
   
   const [thumbnail, setThumbnail] = useState(null);
@@ -94,10 +95,11 @@ export default function EditDestinationClient({ destination }) {
       Object.keys(formData).forEach(key => data.append(key, formData[key]));
       
       if (thumbnail) data.append("thumbnail", thumbnail);
+      if (formData.removeThumbnail === "true") data.append("removeThumbnail", "true");
 
       // Descriptions
       const descriptionsData = descriptions.map(d => ({
-        _id: d._id, title: d.title, description: d.description, highlights: d.highlights
+        _id: d._id, title: d.title, description: d.description, highlights: d.highlights, image: d.image
       }));
       data.append("descriptionsData", JSON.stringify(descriptionsData));
       
@@ -107,7 +109,7 @@ export default function EditDestinationClient({ destination }) {
 
       // Carousels
       const carouselsData = carousels.map(c => ({
-        _id: c._id, title: c.title, description: c.description, buttonText: c.buttonText
+        _id: c._id, title: c.title, description: c.description, buttonText: c.buttonText, image: c.image
       }));
       data.append("carouselsData", JSON.stringify(carouselsData));
       
@@ -186,10 +188,13 @@ export default function EditDestinationClient({ destination }) {
           
           <div>
             <label className="block text-sm font-medium mb-1">Thumbnail Image (Upload new to replace)</label>
-            {destination.thumbnail && (
-              <img src={destination.thumbnail} alt="thumbnail" className="h-20 w-20 object-cover rounded mb-2" />
+            {destination.thumbnail && formData.removeThumbnail === "false" && (
+              <div className="relative inline-block mb-2">
+                <img src={destination.thumbnail} alt="thumbnail" className="h-20 w-20 object-cover rounded" />
+                <button type="button" onClick={() => setFormData(p => ({...p, removeThumbnail: "true"}))} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"><Trash2 className="w-3 h-3" /></button>
+              </div>
             )}
-            <Input type="file" onChange={(e) => setThumbnail(e.target.files[0])} accept="image/*" />
+            <Input type="file" onChange={(e) => {setThumbnail(e.target.files[0]); setFormData(p => ({...p, removeThumbnail: "false"}));}} accept="image/*" />
           </div>
         </div>
         </TabsContent>
@@ -221,9 +226,14 @@ export default function EditDestinationClient({ destination }) {
                   <textarea value={desc.description} onChange={(e) => handleDescChange(index, 'description', e.target.value)} className="w-full p-3 rounded-md border border-gray-300 dark:border-zinc-700 bg-transparent text-sm h-24" />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium mb-1">Image for this section</label>
-                  {desc.image && <img src={desc.image} alt="" className="h-12 w-12 object-cover rounded mb-1" />}
-                  <Input type="file" onChange={(e) => handleDescChange(index, 'file', e.target.files[0])} accept="image/*" />
+                  <label className="block text-sm font-medium mb-1">Image</label>
+                  {desc.image && (
+                    <div className="relative inline-block mb-1">
+                      <img src={desc.image} alt="" className="h-12 w-12 object-cover rounded" />
+                      <button type="button" onClick={() => handleDescChange(index, 'image', "")} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"><Trash2 className="w-3 h-3" /></button>
+                    </div>
+                  )}
+                  <Input type="file" onChange={(e) => {handleDescChange(index, 'file', e.target.files[0]); handleDescChange(index, 'image', "");}} accept="image/*" />
                 </div>
               </div>
 
@@ -275,8 +285,13 @@ export default function EditDestinationClient({ destination }) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Image</label>
-                  {c.image && <img src={c.image} alt="" className="h-12 w-12 object-cover rounded mb-1" />}
-                  <Input type="file" onChange={(e) => handleCarouselChange(index, 'file', e.target.files[0])} accept="image/*" />
+                  {c.image && (
+                    <div className="relative inline-block mb-1">
+                      <img src={c.image} alt="" className="h-12 w-12 object-cover rounded" />
+                      <button type="button" onClick={() => handleCarouselChange(index, 'image', "")} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"><Trash2 className="w-3 h-3" /></button>
+                    </div>
+                  )}
+                  <Input type="file" onChange={(e) => {handleCarouselChange(index, 'file', e.target.files[0]); handleCarouselChange(index, 'image', "");}} accept="image/*" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Title</label>

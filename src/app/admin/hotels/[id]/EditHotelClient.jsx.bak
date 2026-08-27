@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { updateHotel } from "@/lib/actions/admin/hotels.actions";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function EditHotelClient({ hotel }) {
