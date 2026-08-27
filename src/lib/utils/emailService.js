@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
 
 const sendVerificationEmail = async (to, link) => {
   await transporter.sendMail({
-    from: '"EaseTravelsIndia" <no-reply@easetravels.com>',
+    from: '"Novixa Travels India" <no-reply@novixatravelsindia.com>',
     to,
     subject: "Verify Your Email - Newsletter Subscription",
     html: `
@@ -28,7 +28,7 @@ const sendVerificationEmail = async (to, link) => {
 const sendNewsLetterMail = async ({ to, subject, html }) => {
   try {
     const mailOptions = {
-      from: `"EaseTravels India" <${process.env.EMAIL_USER}>`,
+      from: `"Novixa Travels India" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,
@@ -44,9 +44,9 @@ const sendNewsLetterMail = async ({ to, subject, html }) => {
 const sendCreatedEnquiry = async (to, enquiryId) => {
   try {
     const mailOptions = {
-      from: `"EaseTravels India" <${process.env.EMAIL_USER}>`,
+      from: `"Novixa Travels India" <${process.env.EMAIL_USER}>`,
       to,
-      subject: "Enquiry Received - EaseTravels India",
+      subject: "Enquiry Received - Novixa Travels India",
       html: `
         <h2>Thank you for your enquiry!</h2>
         <p>We’ve received your request and our team will get back to you shortly.</p>
@@ -55,7 +55,7 @@ const sendCreatedEnquiry = async (to, enquiryId) => {
         <br/>
         <p>Meanwhile, feel free to explore more travel options and services on our website.</p>
         <br/>
-        <p>Warm regards,<br/>Team EaseTravelsIndia</p>
+        <p>Warm regards,<br/>Team Novixa Travels India</p>
         <hr/>
         <small>This is an automated email. Please do not reply.</small>
       `,
@@ -71,7 +71,7 @@ const sendCreatedEnquiry = async (to, enquiryId) => {
 const sendEnquiryNotificationToAdmin = async ({ enquiryType, enquiryId }) => {
   try {
     const mailOptions = {
-      from: `"EaseTravels India" <${process.env.EMAIL_USER}>`,
+      from: `"Novixa Travels India" <${process.env.EMAIL_USER}>`,
       to: process.env.ADMIN_EMAIL, // set this in your .env file
       subject: `New Enquiry Received - ${enquiryType}`,
       html: `

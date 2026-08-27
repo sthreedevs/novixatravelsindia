@@ -3,7 +3,7 @@
 import { connectDB } from "@/lib/db/index.js";
 import { ContactUs } from "@/lib/models/serviceModels/contactUs.model.js";
 import { contactUsSchema } from "@/lib/validations/index.js";
-import { sendEnquiryNotificationToAdmin } from "@/lib/utils/emailService.js";
+import { sendCreatedEnquiry, sendEnquiryNotificationToAdmin } from "@/lib/utils/emailService.js";
 
 export async function submitContactForm(data) {
   try {
@@ -18,6 +18,7 @@ export async function submitContactForm(data) {
 
     // 4. Send email notification
     if (newContact) {
+      await sendCreatedEnquiry(data.email, newContact._id).catch(console.error);
       await sendEnquiryNotificationToAdmin({
         enquiryType: "Contact Us Message",
         enquiryId: newContact._id,
