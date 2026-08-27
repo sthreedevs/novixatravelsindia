@@ -3,6 +3,7 @@ import { ClientLayout } from "@/components/ClientLayout";
 import { getAllDestinations } from "@/lib/services/destination.service.js";
 import { getAllPackages } from "@/lib/services/package.service.js";
 import { getActiveOffers } from "@/lib/services/navbarTop.service.js";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 export const metadata = {
@@ -57,6 +58,7 @@ export default async function RootLayout({ children }) {
             {children}
           </ClientLayout>
         </Providers>
+        <Analytics />
       </body>
     </html>
   );
