@@ -11,7 +11,8 @@ import {
   Mail,
   LogOut,
   Menu,
-  X
+  X,
+  Users
 } from "lucide-react";
 import { adminLogout } from "@/lib/actions/admin/auth.actions";
 import { toast } from "react-toastify";
@@ -29,6 +30,7 @@ const SIDEBAR_ITEMS = [
   { name: "Guides", href: "/admin/guides", icon: FileText },
   { name: "Offers Banner", href: "/admin/offers", icon: Package },
   { name: "Enquiries", href: "/admin/enquiries", icon: Mail },
+  { name: "Admins", href: "/admin/admins", icon: Users },
 ];
 
 export default function AdminLayout({ children }) {
