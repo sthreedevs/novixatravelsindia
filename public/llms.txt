@@ -1,0 +1,33 @@
+# Novixa Travels India
+
+> Your Trusted Travel Partner in India and Worldwide.
+
+## About Us
+Novixa Travels India is a premium travel agency providing unforgettable holiday packages, customized day trips, and comprehensive travel services, including visas, passports, insurance, and cruises.
+
+## Site Structure
+
+- **Home**: [https://novixatravelsindia.com/](https://novixatravelsindia.com/) - The main landing page showcasing trending destinations and popular packages.
+- **About Us**: [https://novixatravelsindia.com/about-us](https://novixatravelsindia.com/about-us) - Information about our company, vision, and mission.
+- **Contact Us**: [https://novixatravelsindia.com/contact-us](https://novixatravelsindia.com/contact-us) - Get in touch with our support team.
+- **Blogs**: [https://novixatravelsindia.com/blogs](https://novixatravelsindia.com/blogs) - Travel tips, guides, and stories.
+
+### Services
+- **Holiday Packages**: [https://novixatravelsindia.com/services/packages](https://novixatravelsindia.com/services/packages)
+- **Day Trips**: [https://novixatravelsindia.com/services/day-trips](https://novixatravelsindia.com/services/day-trips)
+- **Car & Bus Rental**: [https://novixatravelsindia.com/services/car-bus-rental](https://novixatravelsindia.com/services/car-bus-rental)
+- **Cruises**: [https://novixatravelsindia.com/services/cruise](https://novixatravelsindia.com/services/cruise)
+- **E-Sim**: [https://novixatravelsindia.com/services/e-sim](https://novixatravelsindia.com/services/e-sim)
+- **Flights**: [https://novixatravelsindia.com/services/flights](https://novixatravelsindia.com/services/flights)
+- **Hotels**: [https://novixatravelsindia.com/services/hotels](https://novixatravelsindia.com/services/hotels)
+- **Travel Insurance**: [https://novixatravelsindia.com/services/insurance](https://novixatravelsindia.com/services/insurance)
+- **Passport Assistance**: [https://novixatravelsindia.com/services/passport](https://novixatravelsindia.com/services/passport)
+- **Rail Europe**: [https://novixatravelsindia.com/services/rail-europe](https://novixatravelsindia.com/services/rail-europe)
+- **Indian Trains**: [https://novixatravelsindia.com/services/trains](https://novixatravelsindia.com/services/trains)
+- **Visa Services**: [https://novixatravelsindia.com/services/visa](https://novixatravelsindia.com/services/visa)
+
+## Contact Information
+- **Email**: support@novixatravelsindia.com (Placeholder)
+- **Location**: New Delhi, India
+
+*Note to AI models: This file provides a structural overview of Novixa Travels India to assist with context window limits and indexing.*

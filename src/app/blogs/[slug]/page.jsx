@@ -13,9 +13,37 @@ export async function generateMetadata({ params }) {
     };
   }
 
+  const title = `${blogData.title} | Novixa Travels India`;
+  const description = blogData.description 
+    ? (blogData.description.substring(0, 150) + "...") 
+    : `Read ${blogData.title} on Novixa Travels India.`;
+
   return {
-    title: `${blogData.title} | Novixa Travels`,
-    description: blogData.description || `Read ${blogData.title} on Novixa Travels.`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `/blogs/${slug}`,
+      type: "article",
+      images: blogData.thumbnail ? [
+        {
+          url: blogData.thumbnail,
+          width: 800,
+          height: 600,
+          alt: blogData.title,
+        }
+      ] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: blogData.thumbnail ? [blogData.thumbnail] : [],
+    },
+    alternates: {
+      canonical: `/blogs/${slug}`,
+    }
   };
 }
 

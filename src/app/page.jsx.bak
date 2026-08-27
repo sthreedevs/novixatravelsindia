@@ -28,14 +28,6 @@ import {
 } from "@/lib/services/home.service.js";
 
 // Import the extracted Client Components
-export const metadata = {
-  title: "Novixa Travels India | Leading Travel Agency",
-  description: "Book unforgettable holiday packages, day trips, and international tours with Novixa Travels India. Your trusted travel partner for premium vacation experiences.",
-  alternates: {
-    canonical: "/",
-  }
-};
-
 import {
   TrendingPackages,
   DestinationCard,

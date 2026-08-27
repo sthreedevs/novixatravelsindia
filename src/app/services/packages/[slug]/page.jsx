@@ -13,9 +13,37 @@ export async function generateMetadata({ params }) {
     };
   }
 
+  const title = `${packageData.title} | Novixa Travels India`;
+  const description = packageData.description 
+    ? (packageData.description.substring(0, 150) + "...") 
+    : `Explore the best travel packages for ${packageData.title}.`;
+
   return {
-    title: `${packageData.title} | Novixa Travels`,
-    description: packageData.description || `Explore the best travel packages for ${packageData.title}.`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `/services/packages/${slug}`,
+      images: packageData.thumbnail ? [
+        {
+          url: packageData.thumbnail,
+          width: 800,
+          height: 600,
+          alt: packageData.title,
+        }
+      ] : [],
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: packageData.thumbnail ? [packageData.thumbnail] : [],
+    },
+    alternates: {
+      canonical: `/services/packages/${slug}`,
+    }
   };
 }
 
