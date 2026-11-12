@@ -3,6 +3,7 @@
 import { connectDB } from "@/lib/db/index.js";
 import { ContactUs } from "@/lib/models/serviceModels/contactUs.model.js";
 import { CustomizePackage } from "@/lib/models/customizePackage.model.js";
+import { PackageInfo } from "@/lib/models/serviceModels/packageInfo.model.js";
 import { FlightInfo } from "@/lib/models/serviceModels/flightInfo.model.js";
 import { TrainInfo } from "@/lib/models/serviceModels/trainInfo.model.js";
 import { VisaInfo } from "@/lib/models/serviceModels/visaInfo.model.js";
@@ -20,6 +21,7 @@ import { revalidatePath } from "next/cache";
 const typeToModelMap = {
   "contact": ContactUs,
   "booking": CustomizePackage,
+  "package": PackageInfo,
   "flight": FlightInfo,
   "train": TrainInfo,
   "visa": VisaInfo,
@@ -49,6 +51,7 @@ export async function deleteEnquiry(id, type) {
     }
 
     await Model.findByIdAndDelete(id);
+    revalidatePath("/admin");
     revalidatePath("/admin/enquiries");
     return { success: true };
   } catch (error) {

@@ -2,30 +2,41 @@ import mongoose from "mongoose";
 
 const hotelInfoSchema = new mongoose.Schema(
   {
-    //personal info fields
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    email: { type: String, required: true },
-    phone: { type: String, required: true },
+    // Personal info fields
+    firstName: { type: String, default: "Valued" },
+    lastName: { type: String, default: "Traveler" },
+    fullName: { type: String },
+    email: { type: String },
+    phone: { type: String },
+    mobileNumber: { type: String },
     dob: { type: Date },
     gender: { type: String },
 
-    //service fields
+    // Service fields
     hotelName: { type: String },
-    city: { type: String, required: true },
-    country: { type: String, required: true },
-    nationality: { type: String, required: true },
-    checkInDate: { type: Date, required: true },
-    checkOutDate: { type: Date, required: true },
+    destination: { type: String },
+    destinationCity: { type: String },
+    city: { type: String },
+    country: { type: String },
+    nationality: { type: String },
+    checkInDate: { type: Date },
+    checkOutDate: { type: Date },
+    checkIn: { type: String },
+    checkOut: { type: String },
+    guests: { type: String },
     numberOfAdults: { type: Number },
     numberOfChild: { type: Number },
     numberOfRooms: { type: Number },
     hotelCategory: { type: String },
+    hotelType: { type: String },
+    budget: { type: String },
     mealPlan: { type: String },
+    specialRequests: { type: String },
+    message: { type: String },
 
     documents: [String],
   },
-  { timestamps: true }
+  { timestamps: true, strict: false }
 );
 
 export const HotelInfo = mongoose.models.HotelInfo || mongoose.model("HotelInfo", hotelInfoSchema);

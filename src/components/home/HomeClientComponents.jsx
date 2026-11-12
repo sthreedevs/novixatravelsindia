@@ -13,7 +13,7 @@ export const TestimonialCard = ({ index, data }) => (
   >
     <div className="flex items-center gap-4 mb-4">
       <Image
-        src={data.image || "/placeholder.jpg"}
+        src={data.image || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
         alt={data.name || "Testimonial"}
         width={48}
         height={48}
@@ -36,7 +36,7 @@ export const DestinationCard = ({ data }) => {
       <div className="relative max-w-md border-2 border-opacity-50 rounded-xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 ease-out transform-gpu hover:-translate-y-2">
         <div className="relative overflow-hidden rounded-lg border-2 border-opacity-30 h-72">
           <Image
-            src={data.thumbnail || "/placeholder.jpg"}
+            src={data.thumbnail || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
             alt={data.name || "Destination"}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -89,42 +89,47 @@ export const TrendingPackages = ({ packages = [] }) => {
 
         <div
           ref={scrollRef}
-          className="flex gap-5 overflow-x-auto scroll-smooth scrollbar-hide snap-x snap-mandatory px-2 md:px-6"
+          className="flex gap-5 overflow-x-auto overflow-y-hidden scroll-smooth no-scrollbar snap-x snap-mandatory px-2 md:px-6 py-4 items-stretch"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {packages.map((pkg) => (
             <div
               key={pkg._id}
-              className="flex-shrink-0 bg-[#141414] rounded-3xl w-[80%] sm:w-[280px] md:w-[320px] lg:w-[350px] shadow-md border border-gray-800 hover:scale-[1.03] transition-transform duration-300 ease-in-out snap-start"
+              className="flex-shrink-0 bg-[#141414] rounded-3xl w-[85%] sm:w-[280px] md:w-[320px] lg:w-[350px] shadow-md border border-gray-800 hover:scale-[1.02] transition-transform duration-300 ease-in-out snap-start flex flex-col justify-between overflow-hidden"
             >
-              <div className="relative w-full h-56">
+              <div className="relative w-full h-56 shrink-0">
                 <Image
-                  src={pkg.thumbnail || "/placeholder.jpg"}
+                  src={pkg.thumbnail || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
                   alt={pkg.title || "Package"}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="rounded-t-3xl object-cover"
                 />
               </div>
-              <div className="p-5 text-center">
-                <h3 className="text-xl md:text-2xl font-bold text-[#bba477] mb-3 capitalize">
-                  {pkg.title}
-                </h3>
-                <p className="text-gray-400 text-sm line-clamp-2 mb-4">
-                  {pkg.description}
-                </p>
-                <div className="flex justify-between border-t border-b border-gray-700 py-3 mb-5 text-[#bba477] font-semibold text-sm md:text-base">
-                  <span>{pkg.nights} Nights</span>
-                  <span>{pkg.days} Days</span>
+              <div className="p-5 text-center flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-xl md:text-2xl font-bold text-[#bba477] mb-3 capitalize line-clamp-2 min-h-[3.5rem] flex items-center justify-center">
+                    {pkg.title}
+                  </h3>
+                  <p className="text-gray-400 text-sm line-clamp-2 mb-4">
+                    {pkg.description}
+                  </p>
                 </div>
-                <p className="text-[#bba477] font-semibold mb-4 text-lg">
-                 Starting From ₹{pkg.domesticPrice}
-                </p>
-                <Link
-                  href={`/services/packages/${pkg.slug || pkg._id}`}
-                  className="block bg-[#bba477] hover:bg-[#cbb982] text-black font-semibold rounded-xl px-6 py-2 w-full text-center"
-                >
-                  View Details
-                </Link>
+                <div>
+                  <div className="flex justify-between border-t border-b border-gray-700 py-3 mb-5 text-[#bba477] font-semibold text-sm md:text-base">
+                    <span>{pkg.nights} Nights</span>
+                    <span>{pkg.days} Days</span>
+                  </div>
+                  <p className="text-[#bba477] font-semibold mb-4 text-lg">
+                    Starting From ₹{pkg.domesticPrice}
+                  </p>
+                  <Link
+                    href={`/services/packages/${pkg.slug || pkg._id}`}
+                    className="block bg-[#bba477] hover:bg-[#cbb982] text-black font-semibold rounded-xl px-6 py-2.5 w-full text-center transition-colors"
+                  >
+                    View Details
+                  </Link>
+                </div>
               </div>
             </div>
           ))}
@@ -152,6 +157,10 @@ export const BlogCarousel = ({ blogs = [] }) => {
     scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
   };
 
+  if (!blogs || blogs.length === 0) {
+    return null;
+  }
+
   return (
     <section className="bg-black text-white py-10">
       <div className="relative max-w-7xl mx-auto px-4">
@@ -164,7 +173,8 @@ export const BlogCarousel = ({ blogs = [] }) => {
 
         <div
           ref={scrollRef}
-          className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-hide scrollbar-none"
+          className="flex gap-6 overflow-x-auto overflow-y-hidden scroll-smooth no-scrollbar py-2"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {blogs?.map((blog, idx) => (
             <div
@@ -172,7 +182,7 @@ export const BlogCarousel = ({ blogs = [] }) => {
               className="min-w-[320px] md:min-w-[600px] relative rounded-xl overflow-hidden group"
             >
               <Image
-                src={blog?.thumbnail || "/placeholder.jpg"}
+                src={blog?.thumbnail || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
                 alt={blog?.title || "Blog Post"}
                 width={600}
                 height={400}
@@ -180,7 +190,7 @@ export const BlogCarousel = ({ blogs = [] }) => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col justify-end p-6">
                 <p className="text-yellow-300 font-semibold mb-2">
-                  By {blog?.author || "ETI"}
+                  By {blog?.author || "Novixa Travels India"}
                 </p>
                 <h3 className="text-xl md:text-2xl font-bold mb-4">
                   {blog?.title}

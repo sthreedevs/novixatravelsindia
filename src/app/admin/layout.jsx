@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, 
   Package, 
@@ -12,13 +12,15 @@ import {
   LogOut,
   Menu,
   X,
-  Users
+  Users,
+  Image as ImageIcon
 } from "lucide-react";
 import { adminLogout } from "@/lib/actions/admin/auth.actions";
 import { toast } from "react-toastify";
 
 const SIDEBAR_ITEMS = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Home Carousel", href: "/admin/home-carousel", icon: ImageIcon },
   { name: "Packages", href: "/admin/packages", icon: Package },
   { name: "Destinations", href: "/admin/destinations", icon: MapPin },
   { name: "Hotels", href: "/admin/hotels", icon: Building2 },
@@ -35,7 +37,6 @@ const SIDEBAR_ITEMS = [
 
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
-  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -51,7 +52,7 @@ export default function AdminLayout({ children }) {
   const handleLogout = async () => {
     await adminLogout();
     toast.success("Logged out successfully");
-    router.push("/admin/login");
+    window.location.replace("/admin/login");
   };
 
   if (!isMounted) return null;

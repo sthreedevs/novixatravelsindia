@@ -36,7 +36,9 @@ const ENQUIRY_MODELS = {
   europeRailTicket: EuropeRailTicket,
 };
 
-export async function submitEnquiry(type, formData) {
+import { revalidatePath } from "next/cache";
+
+export async function submitEnquiry(type, formDataOrObject) {
   try {
     await connectDB();
 
@@ -48,43 +50,190 @@ export async function submitEnquiry(type, formData) {
     const data = {};
     const uploadedDocuments = [];
 
-    // Parse formData fields
-    for (const [key, value] of formData.entries()) {
-      if (key === "documents" || key === "document") {
-        if (value && value.size > 0) {
-          const result = await uploadOnCloudinary(value);
-          if (result && result.secure_url) {
-            uploadedDocuments.push(result.secure_url);
+    // Parse formData if it's a FormData instance, or read object keys
+    if (formDataOrObject && typeof formDataOrObject.entries === "function") {
+      for (const [key, value] of formDataOrObject.entries()) {
+        if (key === "documents" || key === "document") {
+          if (value && value.size > 0) {
+            const result = await uploadOnCloudinary(value);
+            if (result && result.secure_url) {
+              uploadedDocuments.push(result.secure_url);
+            }
           }
+        } else if (typeof value === "string") {
+          data[key] = value.trim();
+        } else {
+          data[key] = value;
         }
-      } else if (typeof value === "string") {
-        data[key] = value;
       }
+    } else if (formDataOrObject && typeof formDataOrObject === "object") {
+      Object.assign(data, formDataOrObject);
+    }
+
+    // Auto-normalize Full Name into firstName & lastName
+    const rawName = data.fullName || data.name;
+    if (rawName && (!data.firstName || data.firstName === "Valued")) {
+      const parts = rawName.trim().split(" ");
+      data.firstName = parts[0] || rawName;
+      data.lastName = parts.slice(1).join(" ") || "Traveler";
+    }
+    if (!data.firstName) data.firstName = "Valued";
+    if (!data.lastName) data.lastName = "Traveler";
+
+    // Auto-normalize phone & mobileNumber
+    const rawPhone = data.phone || data.mobileNumber || data.contactNumber;
+    if (rawPhone) {
+      data.phone = rawPhone;
+      data.mobileNumber = rawPhone;
+    }
+
+    // Track whether the visitor explicitly provided a real email address
+    const rawEmail = typeof (data.email || data.emailAddress) === "string"
+      ? (data.email || data.emailAddress).trim()
+      : "";
+    const hasRealCustomerEmail = Boolean(rawEmail);
+    if (rawEmail) {
+      data.email = rawEmail;
+      data.emailAddress = rawEmail;
+    } else {
+      delete data.email;
+      delete data.emailAddress;
+    }
+
+    // Drop empty strings on optional Date fields so optional inputs don't store empty/invalid dates
+    const dateKeys = [
+      "departureDate",
+      "arrivalDate",
+      "returnDate",
+      "travelDate",
+      "checkInDate",
+      "checkOutDate",
+      "validFrom",
+      "startDate",
+      "endDate",
+      "dob",
+    ];
+    for (const key of dateKeys) {
+      if (data[key] === "" || data[key] === null || data[key] === undefined) {
+        delete data[key];
+      }
+    }
+
+    // Auto-normalize common location aliases before deriving departureCity / arrivalCity
+    if (data.fromCity && !data.from) data.from = data.fromCity;
+    if (data.fromLocation && !data.from) data.from = data.fromLocation;
+    if (data.fromLocation && !data.pickUp) data.pickUp = data.fromLocation;
+    if (data.from && !data.departureCity) data.departureCity = data.from;
+    if (data.preferredDepartureCity && !data.departureCity) data.departureCity = data.preferredDepartureCity;
+
+    if (data.toCity && !data.to) data.to = data.toCity;
+    if (data.toLocation && !data.to) data.to = data.toLocation;
+    if (data.toLocation && !data.dropOff) data.dropOff = data.toLocation;
+    if (data.to && !data.arrivalCity) data.arrivalCity = data.to;
+
+    if (data.preferredCruiseDestination) {
+      if (!data.cruiseDestination) data.cruiseDestination = data.preferredCruiseDestination;
+      if (!data.destination) data.destination = data.preferredCruiseDestination;
+    }
+    if (data.destinationCountry) {
+      if (!data.country) data.country = data.destinationCountry;
+      if (!data.destination) data.destination = data.destinationCountry;
+    }
+    if (data.countryOfTravel) {
+      if (!data.destination) data.destination = data.countryOfTravel;
+      if (!data.destinationCountry) data.destinationCountry = data.countryOfTravel;
+    }
+
+    if (data.destination) {
+      if (!data.destinationCity) data.destinationCity = data.destination;
+      if (!data.city) data.city = data.destination;
+      if (!data.destinationCountry) data.destinationCountry = data.destination;
+      if (!data.country) data.country = data.destination;
+      if (!data.countryOfTravel) data.countryOfTravel = data.destination;
+      if (!data.travelCountry) data.travelCountry = data.destination;
+      if (!data.preferredCruiseDestination) data.preferredCruiseDestination = data.destination;
+      if (!data.cruiseDestination) data.cruiseDestination = data.destination;
+    }
+
+    // Auto-normalize common dates
+    if (data.travelDate) {
+      if (!data.departureDate) data.departureDate = data.travelDate;
+      if (!data.travelDates) data.travelDates = data.travelDate;
+      if (!data.checkInDate) data.checkInDate = data.travelDate;
+      if (!data.startDate) data.startDate = data.travelDate;
+    } else if (data.departureDate) {
+      data.travelDate = data.departureDate;
+    }
+    if (data.dateTime && !Number.isNaN(new Date(data.dateTime).getTime())) {
+      if (!data.departureDate) data.departureDate = data.dateTime;
+      if (!data.travelDate) data.travelDate = data.dateTime;
+    }
+
+    // Auto-normalize message/queries
+    const rawMsg = data.message || data.specialRequests || data.query || data.enterYourMessage;
+    if (rawMsg) {
+      data.message = rawMsg;
     }
 
     if (uploadedDocuments.length > 0) {
       data.documents = uploadedDocuments;
-      // Some models use 'document' (singular) for a single file upload
       data.document = uploadedDocuments[0];
+    }
+
+    // Special auto-normalization for Day Trips
+    if (type === "dayTrip") {
+      if (!data.phone && data.phoneNumber) data.phone = data.phoneNumber;
+      if (!data.mobileNumber && data.phone) data.mobileNumber = data.phone;
+      if (!data.tripTitle && data.dayTripTitle) data.tripTitle = data.dayTripTitle;
+      if (!data.notes && data.emergencyContact) data.notes = data.emergencyContact;
+      if (!data.email) {
+        const cleanPhone = (data.phone || "guest").replace(/[^a-zA-Z0-9]/g, "");
+        data.email = `${cleanPhone}@novixatravels.in`;
+      }
+      if (!data.dropLocation) {
+        data.dropLocation = data.pickupLocation || data.pickupCity || "Same as pickup";
+      }
+      if (!data.pickupLocation && data.pickupCity) {
+        data.pickupLocation = data.pickupCity;
+      }
+      if (!data.paymentMethod) data.paymentMethod = "Custom Quote Requested";
+      if (!data.paymentStatus) data.paymentStatus = "Pending Quote";
+      if (data.tripId && !data.dayTrip) {
+        const mongoose = (await import("mongoose")).default;
+        if (mongoose.isValidObjectId(data.tripId)) {
+          data.dayTrip = data.tripId;
+        }
+      }
+      if (!data.travelDate && data.date && !Number.isNaN(new Date(data.date).getTime())) {
+        data.travelDate = new Date(data.date);
+      }
     }
 
     // Create the DB record
     const newEnquiry = await Model.create(data);
 
-    // Send emails
-    if (newEnquiry && data.email) {
-      // Background email sending to avoid blocking response
-      await sendCreatedEnquiry(data.email, newEnquiry._id).catch(console.error);
-      await sendEnquiryNotificationToAdmin({
-        enquiryType: `${type.charAt(0).toUpperCase() + type.slice(1)} Enquiry`,
-        enquiryId: newEnquiry._id,
-      }).catch(console.error);
+    // Send emails in background without blocking or bouncing synthetic fallback addresses
+    if (newEnquiry) {
+      if (hasRealCustomerEmail) {
+        sendCreatedEnquiry(rawEmail, newEnquiry._id).catch(console.error);
+      }
+      if (process.env.ADMIN_EMAIL) {
+        sendEnquiryNotificationToAdmin({
+          enquiryType: `${type.charAt(0).toUpperCase() + type.slice(1)} Enquiry`,
+          enquiryId: newEnquiry._id,
+        }).catch(console.error);
+      }
     }
+
+    // Revalidate admin dashboard & enquiries page cache
+    try {
+      revalidatePath("/admin");
+      revalidatePath("/admin/enquiries");
+    } catch (_) {}
 
     return {
       success: true,
       message: `${type} Enquiry submitted successfully.`,
-      // Return a plain object, because Mongoose documents can't be passed from Server Action
       data: JSON.parse(JSON.stringify(newEnquiry)),
     };
   } catch (error) {

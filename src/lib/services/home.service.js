@@ -49,12 +49,24 @@ export async function getHomeCarousel() {
   return JSON.parse(JSON.stringify(carousel));
 }
 
+export async function getHomeCarouselById(id) {
+  try {
+    await connectDB();
+    const slide = await Carousel.findOne({ _id: id, type: "home" }).lean();
+    if (!slide) return null;
+    return JSON.parse(JSON.stringify(slide));
+  } catch (error) {
+    console.error("Error fetching home carousel slide by ID:", error);
+    return null;
+  }
+}
+
 export async function getEtiBlogs() {
   await connectDB();
-  const blogs = await Blog.find({ author: "ETI" })
+  const blogs = await Blog.find()
     .populate("content")
     .sort({ createdAt: -1 })
-    .limit(5)
+    .limit(6)
     .lean();
   return JSON.parse(JSON.stringify(blogs));
 }

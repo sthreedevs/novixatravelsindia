@@ -97,7 +97,7 @@ const Slide = ({ slide, index, current, handleSlideClick }: SlideProps) => {
               opacity: current === index ? 1 : 0.5,
             }}
             alt={title || "slide"}
-            src={src || "/placeholder.jpg"}
+            src={src || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
             width={800}
             height={800}
             onLoad={imageLoaded as any}

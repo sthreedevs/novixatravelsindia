@@ -2,25 +2,33 @@ import mongoose from "mongoose";
 
 const europeRailPassSchema = new mongoose.Schema(
   {
-    //personal info fields
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    email: { type: String, required: true },
-    phone: { type: String, required: true },
+    // Personal info fields
+    firstName: { type: String, default: "Valued" },
+    lastName: { type: String, default: "Traveler" },
+    fullName: { type: String },
+    email: { type: String },
+    phone: { type: String },
+    mobileNumber: { type: String },
     dob: { type: Date },
 
-    // service fields
-    countryOfResidence: { type: String, required: true },
+    // Service fields
+    countryOfResidence: { type: String },
     panNumber: { type: String },
-    country: { type: String, required: true },
-    validFrom: { type: Date, required: true },
-    numberOfAdults: { type: Number },
-    numberOfYouth: { type: Number },
-    numberOfSeniors: { type: Number },
-    numberOfTravelsDays: { type: Number },
-  },{
-    timestamps:true
-  });
+    country: { type: String },
+    passType: { type: String },
+    validFrom: { type: Date },
+    travelDate: { type: Date },
+    numberOfAdults: { type: String },
+    numberOfYouth: { type: String },
+    numberOfSeniors: { type: String },
+    numberOfTravelsDays: { type: String },
+    message: { type: String },
+  },
+  {
+    timestamps: true,
+    strict: false,
+  }
+);
 
   export const EuropeRailPass = mongoose.models.EuropeRailPass || mongoose.model("EuropeRailPass", europeRailPassSchema);
   

@@ -27,6 +27,9 @@ import {
   getEtiBlogs,
 } from "@/lib/services/home.service.js";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // Import the extracted Client Components
 export const metadata = {
   title: "Novixa Travels India | Leading Travel Agency",
@@ -145,10 +148,14 @@ export default async function Home() {
         </section>
       </MouseImageTrail>
 
-      <h1 className="text-3xl md:text-5xl mb-10 font-medium text-center">
-        Travel Tales Hub by NTI
-      </h1>
-      <BlogCarousel blogs={blogs} />
+      {blogs && blogs.length > 0 && (
+        <div className="my-10">
+          <h1 className="text-3xl md:text-5xl mb-10 font-medium text-center">
+            Travel Tales Hub by NTI
+          </h1>
+          <BlogCarousel blogs={blogs} />
+        </div>
+      )}
 
       {/* why choose us */}
       <div className="my-10">
@@ -165,7 +172,7 @@ export default async function Home() {
               {/* <!-- Center icon --> */}
               <div className="relative z-10 flex items-center justify-center w-full h-full rounded-full bg-white shadow-md">
                 {/* <!-- Replace this with your SVG --> */}
-                <Image src="/logo.png" alt="logo" width={384} height={384} className="h-96 w-auto" />
+                <Image src="https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332973/logo.png" alt="logo" width={384} height={384} className="h-96 w-auto" />
               </div>
             </div>
           </div>

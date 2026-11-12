@@ -42,6 +42,122 @@ export const transformPackageData = (backendPackages) => {
   return Object.values(grouped);
 };
 
+export const transformDayTripData = (backendTrips = []) => {
+  if (!Array.isArray(backendTrips)) return [];
+
+  const commonLocations = [
+    "Delhi", "Agra", "Jaipur", "Rishikesh", "Corbett", "Jim Corbett",
+    "Mussoorie", "Neemrana", "Mathura", "Vrindavan", "Manali", "Shimla",
+    "Goa", "Udaipur", "Varanasi", "Mumbai", "Haridwar", "Amritsar", "Nainital", "Chandigarh"
+  ];
+
+  return backendTrips.map((item) => {
+    let location = "India";
+    const title = item?.title || "";
+
+    // 1. Check for "to <Destination>" e.g. "Delhi to Jaipur"
+    const toMatch = title.match(/\bto\s+([A-Za-z]+(?:\s+[A-Za-z]+)?)\b/i);
+    if (toMatch && toMatch[1]) {
+      const candidate = toMatch[1].trim();
+      for (const loc of commonLocations) {
+        if (new RegExp(`\\b${loc}\\b`, "i").test(candidate)) {
+          location = loc;
+          break;
+        }
+      }
+    }
+
+    // 2. Nicknames & Monuments
+    if (location === "India") {
+      if (/pink city/i.test(title)) location = "Jaipur";
+      else if (/taj mahal/i.test(title)) location = "Agra";
+    }
+
+    // 3. Direct match
+    if (location === "India") {
+      for (const loc of commonLocations) {
+        if (new RegExp(`\\b${loc}\\b`, "i").test(title)) {
+          location = loc;
+          break;
+        }
+      }
+    }
+
+    // 4. Fallback from prefix
+    if (location === "India") {
+      const parts = title.split(/[-–—:|]/)[0].trim().split(/\s+/);
+      location = parts.slice(0, 2).join(" ") || "India";
+    }
+
+    let highlights = "";
+    if (Array.isArray(item?.descriptionList) && item.descriptionList.length > 0) {
+      highlights = item.descriptionList.slice(0, 3).join(" • ");
+    } else if (Array.isArray(item?.info) && item.info.length > 0) {
+      highlights = item.info.slice(0, 2).join(" • ");
+    } else if (item?.description) {
+      highlights =
+        item.description.length > 80
+          ? `${item.description.slice(0, 77)}...`
+          : item.description;
+    } else {
+      highlights = "Monument Visits • Chauffeur Driven • Flexible";
+    }
+
+    let formattedPrice = "₹2,499";
+    if (item?.domesticPrice) {
+      const raw = String(item.domesticPrice).trim();
+      if (raw.startsWith("₹")) {
+        formattedPrice = raw;
+      } else {
+        const num = Number(raw.replace(/[^0-9.]/g, ""));
+        formattedPrice = !isNaN(num) && num > 0 ? `₹${num.toLocaleString("en-IN")}` : `₹${raw}`;
+      }
+    }
+
+    const slug = (item?.title || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "") || item?._id?.toString() || "day-trip";
+
+    return {
+      id: item?._id?.toString() || item?.id || String(Math.random()),
+      _id: item?._id?.toString() || item?.id,
+      slug,
+      title: item?.title || "Day Trip",
+      location,
+      image: item?.thumbnail || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png",
+      highlights,
+      duration: "One Day",
+      type: "Private Tour",
+      pricePrefix: "Starting from",
+      price: formattedPrice,
+      priceSuffix: "per person",
+      buttonText: "View Details →",
+      description: item?.description || "",
+      descriptionList: Array.isArray(item?.descriptionList) ? item.descriptionList : [],
+      inclusions: Array.isArray(item?.inclusionList) && item.inclusionList.length > 0
+        ? item.inclusionList
+        : [
+            "AC vehicle for the entire tour",
+            "Toll taxes, parking and fuel charges",
+            "Professional chauffeur assistance",
+            "Complimentary bottled water on-board",
+          ],
+      exclusions: Array.isArray(item?.exclusionList) && item.exclusionList.length > 0
+        ? item.exclusionList
+        : [
+            "Monument and attraction entry tickets",
+            "Lunch and personal meals",
+            "Optional professional licensed guide",
+          ],
+      info: Array.isArray(item?.info) ? item.info : [],
+      domesticPrice: item?.domesticPrice || "2499",
+      internationalPrice: item?.internationalPrice || "50",
+      isDynamic: true,
+    };
+  });
+};
+
 export function toTitleCase(str) {
   return str
     .toLowerCase() // Convert the entire string to lowercase

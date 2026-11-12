@@ -1,63 +1,78 @@
 import React from "react";
-import { PackagePageClient } from "@/components/packages/PackagePageClient";
-import { getPackageBySlug } from "@/lib/services/package.service.js";
-import { notFound } from "next/navigation";
+import { getPackageBySlug, getAllPackages } from "@/lib/services/package.service.js";
+import { getEnrichedPackage } from "@/data/services/packages.data.js";
+import PackageDetailPageClient from "@/components/services/packages/detail/PackageDetailPageClient";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const packageData = await getPackageBySlug(slug);
-
-  if (!packageData) {
-    return {
-      title: "Package Not Found",
-    };
+  let rawPackage = null;
+  try {
+    rawPackage = await getPackageBySlug(slug);
+  } catch (err) {
+    console.error("Error fetching package for metadata:", err);
   }
 
-  const title = `${packageData.title} | Novixa Travels India`;
-  const description = packageData.description 
-    ? (packageData.description.substring(0, 150) + "...") 
-    : `Explore the best travel packages for ${packageData.title}.`;
+  const packageData = getEnrichedPackage(rawPackage, slug);
+
+  const fullTitle = `${packageData.title} ${packageData.titleHighlight || ""} | Novixa Travels India`.trim();
+  const description =
+    packageData.subtitle ||
+    `Explore bespoke travel packages for ${packageData.title} with luxury accommodations, private transfers, and curated itineraries.`;
 
   return {
-    title,
+    title: fullTitle,
     description,
     openGraph: {
-      title,
+      title: fullTitle,
       description,
       url: `/services/packages/${slug}`,
-      images: packageData.thumbnail ? [
-        {
-          url: packageData.thumbnail,
-          width: 800,
-          height: 600,
-          alt: packageData.title,
-        }
-      ] : [],
-      type: "article",
+      type: "website",
+      images: packageData.heroImage
+        ? [
+            {
+              url: packageData.heroImage,
+              width: 1200,
+              height: 630,
+              alt: packageData.title,
+            },
+          ]
+        : [],
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: fullTitle,
       description,
-      images: packageData.thumbnail ? [packageData.thumbnail] : [],
+      images: packageData.heroImage ? [packageData.heroImage] : [],
     },
     alternates: {
       canonical: `/services/packages/${slug}`,
-    }
+    },
   };
 }
 
-export default async function Package({ params }) {
+export default async function PackageDetailPage({ params }) {
   const { slug } = await params;
 
-  // Fetch data on the server
-  const packageData = await getPackageBySlug(slug);
-
-  if (!packageData) {
-    // If no package data, show 404 page
-    notFound();
+  // 1. Fetch raw package from MongoDB (by slug or ID)
+  let rawPackage = null;
+  let allDbPackages = [];
+  try {
+    rawPackage = await getPackageBySlug(slug);
+    allDbPackages = await getAllPackages();
+  } catch (err) {
+    console.error("Error fetching package in detail page:", err);
   }
 
-  // Pass data to the interactive Client Component
-  return <PackagePageClient packageData={packageData} />;
+  // 2. Filter other packages from DB for "More Destinations"
+  const otherPackages = (allDbPackages || []).filter(
+    (p) => p.slug !== slug && p._id?.toString() !== rawPackage?._id?.toString()
+  );
+
+  // 3. Enrich with structured design specs, timeline, dynamic images & travel types
+  const packageData = getEnrichedPackage(rawPackage, slug, otherPackages);
+
+  return <PackageDetailPageClient packageData={packageData} />;
 }

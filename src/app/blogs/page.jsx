@@ -3,8 +3,9 @@ import { getBlogs } from "@/lib/services/blog.service.js";
 import { BlogsPageClient } from "@/components/blogs/BlogsPageClient";
 
 export const metadata = {
-  title: "Blogs | Novixa Travels",
-  description: "Read the latest travel blogs, tips, and destination guides from Novixa Travels.",
+  title: "Travel Tips, Guides & Inspiration | Novixa Travels India",
+  description:
+    "Get expert travel tips, destination guides, visa updates, packing hacks and more. Plan smarter, travel better with Novixa Travels India.",
 };
 
 export default async function BlogsPage() {

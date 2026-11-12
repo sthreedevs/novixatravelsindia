@@ -65,7 +65,7 @@ export const DayTripsPageClient = ({ dayTripsData, initialGuides }) => {
   return (
     <div className="py-20">
       {/* Hero Section */}
-      <ImagesSlider className="h-[40rem]" images={["/backgrounds/dayTrip.jpg"]}>
+      <ImagesSlider className="h-[40rem]" images={["https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332948/backgrounds/dayTrip.jpg"]}>
         <motion.div
           initial={{
             opacity: 0,
@@ -108,7 +108,7 @@ export const DayTripsPageClient = ({ dayTripsData, initialGuides }) => {
                 </Button>
               </div>
               <Image
-                src={trip.thumbnail || "/placeholder.jpg"}
+                src={trip.thumbnail || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
                 alt={trip.title || "thumbnail"}
                 width={800}
                 height={400}

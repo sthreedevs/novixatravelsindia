@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import { Pencil, Search, ArrowUpDown } from "lucide-react";
+import Image from "next/image";
+import { Pencil, Search, ArrowUpDown, ExternalLink } from "lucide-react";
 import DeleteDayTripButton from "./DeleteDayTripButton";
 import { Input } from "@/components/ui/input";
 
@@ -131,9 +132,11 @@ export default function DayTripsTableClient({ initialDayTrips }) {
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                       <div className="h-10 w-10 flex-shrink-0 relative rounded overflow-hidden bg-gray-100">
-                        <img 
-                          src={dayTrip.thumbnail || "/placeholder.jpg"} 
+                        <Image 
+                          src={dayTrip.thumbnail || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"} 
                           alt="" 
+                          fill
+                          unoptimized
                           className="h-10 w-10 object-cover"
                         />
                       </div>
@@ -141,6 +144,11 @@ export default function DayTripsTableClient({ initialDayTrips }) {
                         <div className="text-sm font-medium text-gray-900 dark:text-white capitalize truncate" title={dayTrip.title}>
                           {dayTrip.title}
                         </div>
+                        {dayTrip.destination && (
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#fbf5eb] text-[#b37f28] font-bold uppercase tracking-wider inline-block mt-0.5">
+                            {dayTrip.destination}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </td>
@@ -152,6 +160,16 @@ export default function DayTripsTableClient({ initialDayTrips }) {
                     <div>${dayTrip.internationalPrice} (INTL)</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
+                    <a
+                      href={`/services/day-trips/${dayTrip._id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-stone-500 hover:text-stone-900 dark:hover:text-stone-200 inline-flex items-center"
+                      title="Preview Live Page"
+                    >
+                      <ExternalLink className="w-4 h-4 mr-1" />
+                      View
+                    </a>
                     <Link href={`/admin/day-trips/${dayTrip._id}`} className="text-[#BFA181] hover:text-[#a68c70] inline-flex items-center">
                       <Pencil className="w-4 h-4 mr-1" />
                       Edit

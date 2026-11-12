@@ -43,7 +43,7 @@ export async function adminLogin(email, password) {
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24, // 1 day
       path: "/",
-      sameSite: "strict",
+      sameSite: "lax",
     });
 
     return { success: true };

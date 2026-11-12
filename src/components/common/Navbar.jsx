@@ -42,67 +42,67 @@ const navItems = [
         title: "Packages",
         description: "Tailored travel experiences for any destination.",
         path: "/services/packages",
-        img: "/services/packages.png",
+        img: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332975/services/packages.png",
       },
       {
         title: "Hotels",
         description: "Book top-rated hotels with exclusive deals.",
         path: "/services/hotels",
-        img: "/services/hotels.png",
+        img: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332975/services/hotels.png",
       },
       {
         title: "Flights",
         description: "Compare and book cheap flight tickets.",
         path: "/services/flights",
-        img: "/services/flights.png",
+        img: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332974/services/flights.png",
       },
       {
         title: "Trains",
         description: "Book your trains tickets with ease.",
         path: "/services/trains",
-        img: "/services/trains.png",
+        img: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/services/trains.png",
       },
       {
         title: "Cruise",
         description: "Explore the world on a cruise.",
         path: "/services/cruise",
-        img: "/services/image.png",
+        img: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332975/services/image.png",
       },
       {
         title: "RailEurope",
         description: "Book your trains tickets with ease.",
         path: "/services/rail-europe",
-        img: "/services/trains.png",
+        img: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/services/trains.png",
       },
       {
         title: "Rentals/Transfers",
         description: "Affordable car and bus rentals across cities.",
         path: "/services/car-bus-rental",
-        img: "/services/rentals.png",
+        img: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/services/rentals.png",
       },
       {
         title: "Passport",
         description: "Smooth passport application and renewal.",
         path: "/services/passport",
-        img: "/services/passport.png",
+        img: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/services/passport.png",
       },
       {
         title: "Visa",
         description: "Visa assistance for all your travel needs.",
         path: "/services/visa",
-        img: "/services/visa.png",
+        img: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/services/visa.png",
       },
       {
         title: "Insurance",
         description: "Travel insurance for a worry-free journey.",
         path: "/services/insurance",
-        img: "/services/insurance.png",
+        img: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332975/services/insurance.png",
       },
       {
         title: "E-Sim",
         description: "Stay connected globally with our e-SIM services.",
         path: "/services/e-sim",
-        img: "/services/esim.png",
+        img: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332974/services/esim.png",
       },
     ],
   },
@@ -228,7 +228,7 @@ const Navbar = ({ initialOffers }) => {
         {/* Logo & Menu */}
         <div className="flex items-center gap-4">
           <Image
-            src="/logo.png"
+            src="https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332973/logo.png"
             alt="logo"
             className="size-12 rounded-full"
             width={48}
@@ -518,7 +518,7 @@ const ListItem = React.forwardRef(
             <div className="flex items-center gap-4">
               <div className="flex-[0.3] rounded-md overflow-hidden bg-zinc-100 p-2 flex items-center justify-center">
                 <Image
-                  src={img || "/placeholder.png"}
+                  src={img || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
                   alt={title}
                   width={64}
                   height={64}

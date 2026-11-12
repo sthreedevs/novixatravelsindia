@@ -2,26 +2,34 @@ import mongoose from "mongoose";
 
 const insuranceInfoSchema = new mongoose.Schema(
   {
-    //personal info fields
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    email: { type: String, required: true },
-    phone: { type: String, required: true },
+    // Personal info fields
+    firstName: { type: String, default: "Valued" },
+    lastName: { type: String, default: "Traveler" },
+    fullName: { type: String },
+    email: { type: String },
+    phone: { type: String },
+    mobileNumber: { type: String },
     dob: { type: Date },
     gender: { type: String },
 
-    //service fields
-    country: { type: String, required: true }, 
+    // Service fields
+    country: { type: String },
+    destinationCountry: { type: String },
+    destination: { type: String },
     numberOfDays: { type: String },
     numberOfPassengers: { type: String },
+    travellers: { type: String },
     typeOfInsurance: { type: String },
+    plan: { type: String },
     travellingFromIndia: { type: String },
     startDate: { type: Date },
     endDate: { type: Date },
+    travelDates: { type: String },
+    message: { type: String },
 
     documents: [String],
   },
-  { timestamps: true }
+  { timestamps: true, strict: false }
 );
 
 export const InsuranceInfo = mongoose.models.InsuranceInfo || mongoose.model("InsuranceInfo", insuranceInfoSchema);

@@ -8,6 +8,22 @@ import { uploadOnCloudinary } from "@/lib/utils/cloudinary.js";
 import { revalidatePath } from "next/cache";
 import mongoose from "mongoose";
 
+function parseFaqsData(raw) {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .map((f) => ({
+        question: (f?.question || "").trim(),
+        answer: (f?.answer || "").trim(),
+      }))
+      .filter((f) => f.question && f.answer);
+  } catch {
+    return [];
+  }
+}
+
 export async function createPackage(formData) {
   try {
     await connectDB();
@@ -23,9 +39,22 @@ export async function createPackage(formData) {
     // 2. Extract arrays
     const parseArray = (str) => str ? str.split(",").map((s) => s.trim()).filter(Boolean) : [];
     const tags = parseArray(formData.get("tags"));
-    const category = parseArray(formData.get("category"));
     const inclusions = parseArray(formData.get("inclusions"));
     const exclusions = parseArray(formData.get("exclusions"));
+
+    // Travel Type: multi-select array (can be JSON array string or comma separated)
+    let travelType = [];
+    const rawTravelType = formData.get("travelType");
+    if (rawTravelType) {
+      try {
+        const parsed = JSON.parse(rawTravelType);
+        if (Array.isArray(parsed)) travelType = parsed;
+        else travelType = parseArray(rawTravelType);
+      } catch {
+        travelType = parseArray(rawTravelType);
+      }
+    }
+    const category = travelType.length > 0 ? travelType : parseArray(formData.get("category"));
 
     // 3. Process Timelines
     const timelinesData = JSON.parse(formData.get("timelinesData") || "[]");
@@ -56,25 +85,44 @@ export async function createPackage(formData) {
       timelineIds.push(newTl._id);
     }
 
-    // 4. Process Carousels
-    const carouselsData = JSON.parse(formData.get("carouselsData") || "[]");
-    const carouselIds = [];
-    for (let i = 0; i < carouselsData.length; i++) {
-      const c = carouselsData[i];
-      let imgUrl = c.image;
-      
-      const file = formData.get(`carousel_${i}_image`);
-      if (file && file.size > 0) {
-        const up = await uploadOnCloudinary(file);
-        imgUrl = up?.secure_url || "";
-      }
+    // 4. Process Section Showcase Images:
+    // Why Choose Collage (3 Photos: Main, Top, Bottom) + Itinerary Feature Photo (1 Photo)
+    let whyChooseMain = formData.get("existing_whyChoose_main") || "";
+    let whyChooseTop = formData.get("existing_whyChoose_top") || "";
+    let whyChooseBottom = formData.get("existing_whyChoose_bottom") || "";
+    let itineraryImage = formData.get("existing_itineraryImage") || "";
 
+    const fileWhyMain = formData.get("whyChoose_main");
+    if (fileWhyMain && fileWhyMain.size > 0) {
+      const up = await uploadOnCloudinary(fileWhyMain);
+      whyChooseMain = up?.secure_url || whyChooseMain;
+    }
+    const fileWhyTop = formData.get("whyChoose_top");
+    if (fileWhyTop && fileWhyTop.size > 0) {
+      const up = await uploadOnCloudinary(fileWhyTop);
+      whyChooseTop = up?.secure_url || whyChooseTop;
+    }
+    const fileWhyBottom = formData.get("whyChoose_bottom");
+    if (fileWhyBottom && fileWhyBottom.size > 0) {
+      const up = await uploadOnCloudinary(fileWhyBottom);
+      whyChooseBottom = up?.secure_url || whyChooseBottom;
+    }
+    const fileItin = formData.get("itineraryImage_file");
+    if (fileItin && fileItin.size > 0) {
+      const up = await uploadOnCloudinary(fileItin);
+      itineraryImage = up?.secure_url || itineraryImage;
+    }
+
+    // Maintain Carousel records for backward compatibility
+    const sectionImages = [whyChooseMain, whyChooseTop, whyChooseBottom, itineraryImage].filter(Boolean);
+    const carouselIds = [];
+    for (let i = 0; i < sectionImages.length; i++) {
       const newC = await Carousel.create({
-        title: c.title,
-        description: c.description,
-        buttonText: c.buttonText,
-        type: c.type || "package",
-        image: imgUrl,
+        title: "",
+        description: "",
+        buttonText: "",
+        type: "package",
+        image: sectionImages[i],
       });
       carouselIds.push(newC._id);
     }
@@ -93,9 +141,17 @@ export async function createPackage(formData) {
       showOnHome: formData.get("showOnHome") === "true",
       thumbnail: thumbnailUrl,
       tags,
+      travelType,
       category,
       inclusions,
       exclusions,
+      whyChooseImages: {
+        main: whyChooseMain,
+        top: whyChooseTop,
+        bottom: whyChooseBottom,
+      },
+      itineraryImage: itineraryImage,
+      faqs: parseFaqsData(formData.get("faqsData")),
       timeline: timelineIds,
       carouselData: carouselIds,
     });
@@ -158,9 +214,22 @@ export async function updatePackage(id, formData) {
     // 2. Extract arrays
     const parseArray = (str) => str ? str.split(",").map((s) => s.trim()).filter(Boolean) : [];
     const tags = parseArray(formData.get("tags"));
-    const category = parseArray(formData.get("category"));
     const inclusions = parseArray(formData.get("inclusions"));
     const exclusions = parseArray(formData.get("exclusions"));
+
+    // Travel Type: multi-select array (can be JSON array string or comma separated)
+    let travelType = [];
+    const rawTravelType = formData.get("travelType");
+    if (rawTravelType) {
+      try {
+        const parsed = JSON.parse(rawTravelType);
+        if (Array.isArray(parsed)) travelType = parsed;
+        else travelType = parseArray(rawTravelType);
+      } catch {
+        travelType = parseArray(rawTravelType);
+      }
+    }
+    const category = travelType.length > 0 ? travelType : parseArray(formData.get("category"));
 
     // 3. Process Timelines
     const timelinesData = JSON.parse(formData.get("timelinesData") || "[]");
@@ -211,46 +280,54 @@ export async function updatePackage(id, formData) {
       await PackageTimeline.deleteMany({ _id: { $in: tlToDelete } });
     }
 
-    // 4. Process Carousels
-    const carouselsData = JSON.parse(formData.get("carouselsData") || "[]");
-    const carouselIds = [];
-    for (let i = 0; i < carouselsData.length; i++) {
-      const c = carouselsData[i];
-      let imgUrl = c.image;
-      
-      const file = formData.get(`carousel_${i}_image`);
-      if (file && file.size > 0) {
-        const up = await uploadOnCloudinary(file);
-        imgUrl = up?.secure_url || imgUrl;
-      }
+    // 4. Process Section Showcase Images:
+    // Why Choose Collage (3 Photos: Main, Top, Bottom) + Itinerary Feature Photo (1 Photo)
+    let whyChooseMain = formData.get("existing_whyChoose_main") ?? (pkg.whyChooseImages?.main || "");
+    let whyChooseTop = formData.get("existing_whyChoose_top") ?? (pkg.whyChooseImages?.top || "");
+    let whyChooseBottom = formData.get("existing_whyChoose_bottom") ?? (pkg.whyChooseImages?.bottom || "");
+    let itineraryImage = formData.get("existing_itineraryImage") ?? (pkg.itineraryImage || "");
 
-      if (c._id) {
-        await Carousel.findByIdAndUpdate(c._id, {
-          title: c.title,
-          description: c.description,
-          buttonText: c.buttonText,
-          type: c.type || "package",
-          image: imgUrl,
-        });
-        carouselIds.push(c._id);
-      } else {
-        const newC = await Carousel.create({
-          title: c.title,
-          description: c.description,
-          buttonText: c.buttonText,
-          type: c.type || "package",
-          image: imgUrl,
-        });
-        carouselIds.push(newC._id);
-      }
+    if (formData.get("remove_whyChoose_main") === "true") whyChooseMain = "";
+    if (formData.get("remove_whyChoose_top") === "true") whyChooseTop = "";
+    if (formData.get("remove_whyChoose_bottom") === "true") whyChooseBottom = "";
+    if (formData.get("remove_itineraryImage") === "true") itineraryImage = "";
+
+    const fileWhyMain = formData.get("whyChoose_main");
+    if (fileWhyMain && fileWhyMain.size > 0) {
+      const up = await uploadOnCloudinary(fileWhyMain);
+      whyChooseMain = up?.secure_url || whyChooseMain;
+    }
+    const fileWhyTop = formData.get("whyChoose_top");
+    if (fileWhyTop && fileWhyTop.size > 0) {
+      const up = await uploadOnCloudinary(fileWhyTop);
+      whyChooseTop = up?.secure_url || whyChooseTop;
+    }
+    const fileWhyBottom = formData.get("whyChoose_bottom");
+    if (fileWhyBottom && fileWhyBottom.size > 0) {
+      const up = await uploadOnCloudinary(fileWhyBottom);
+      whyChooseBottom = up?.secure_url || whyChooseBottom;
+    }
+    const fileItin = formData.get("itineraryImage_file");
+    if (fileItin && fileItin.size > 0) {
+      const up = await uploadOnCloudinary(fileItin);
+      itineraryImage = up?.secure_url || itineraryImage;
     }
 
-    // Delete orphaned carousels
-    const oldCStr = pkg.carouselData.map(c => c.toString());
-    const newCStr = carouselIds.map(c => c.toString());
-    const cToDelete = oldCStr.filter(c => !newCStr.includes(c));
-    if (cToDelete.length > 0) {
-      await Carousel.deleteMany({ _id: { $in: cToDelete } });
+    // Maintain Carousel records for backward compatibility
+    if (pkg.carouselData && pkg.carouselData.length > 0) {
+      await Carousel.deleteMany({ _id: { $in: pkg.carouselData } });
+    }
+    const sectionImages = [whyChooseMain, whyChooseTop, whyChooseBottom, itineraryImage].filter(Boolean);
+    const carouselIds = [];
+    for (let i = 0; i < sectionImages.length; i++) {
+      const newC = await Carousel.create({
+        title: "",
+        description: "",
+        buttonText: "",
+        type: "package",
+        image: sectionImages[i],
+      });
+      carouselIds.push(newC._id);
     }
 
     // 5. Update Package
@@ -267,17 +344,27 @@ export async function updatePackage(id, formData) {
       showOnHome: formData.get("showOnHome") === "true",
       thumbnail: thumbnailUrl,
       tags,
+      travelType,
       category,
       inclusions,
       exclusions,
+      whyChooseImages: {
+        main: whyChooseMain,
+        top: whyChooseTop,
+        bottom: whyChooseBottom,
+      },
+      itineraryImage: itineraryImage,
+      faqs: parseFaqsData(formData.get("faqsData")),
       timeline: timelineIds,
       carouselData: carouselIds,
     });
 
     revalidatePath("/admin/packages");
+    revalidatePath(`/admin/packages/${id}`);
     revalidatePath("/services/packages");
     revalidatePath("/");
     revalidatePath(`/services/packages/${pkg.slug}`);
+    revalidatePath(`/services/packages/${id}`);
 
     return { success: true };
   } catch (error) {

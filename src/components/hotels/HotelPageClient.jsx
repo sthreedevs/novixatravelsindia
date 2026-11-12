@@ -204,7 +204,7 @@ const HotelCard = ({ hotel, handleFormModal }) => {
       {/* Card Image */}
       <div className="relative flex-2 w-full aspect-[4/3] overflow-hidden rounded-3xl">
         <Image
-          src={hotel.thumbnail || "/placeholder.jpg"}
+          src={hotel.thumbnail || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
           alt={hotel.name || "hotel"}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

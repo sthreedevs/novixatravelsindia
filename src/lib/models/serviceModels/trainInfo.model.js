@@ -2,27 +2,36 @@ import mongoose from "mongoose";
 
 const trainInfoSchema = new mongoose.Schema(
   {
-    //personal info fields
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    email: { type: String, required: true },
-    phone: { type: String, required: true },
+    // Personal info fields
+    firstName: { type: String, default: "Valued" },
+    lastName: { type: String, default: "Traveler" },
+    fullName: { type: String },
+    email: { type: String },
+    phone: { type: String },
+    mobileNumber: { type: String },
     dob: { type: Date },
     gender: { type: String },
     
-    //service fields
-    from: { type: String, required: true },
-    to: { type: String, required: true },
-    departureDate: { type: Date, required: true },
+    // Service fields
+    from: { type: String },
+    to: { type: String },
+    fromCity: { type: String },
+    toCity: { type: String },
+    departureCity: { type: String },
+    arrivalCity: { type: String },
+    departureDate: { type: Date },
+    travelDate: { type: Date },
     departureTime: { type: String },
-    numberOfAdults: { type: String, required: true },
-    numberOfChild: { type: String, required: true },
-    travelClass: { type: String, required: true },
+    numberOfAdults: { type: String },
+    numberOfChild: { type: String },
+    numberOfPassengers: { type: String },
+    travelClass: { type: String },
     specialQuota: { type: String },
+    message: { type: String },
 
     documents: [String],
   },
-  { timestamps: true }
+  { timestamps: true, strict: false }
 );
 
 export const TrainInfo = mongoose.models.TrainInfo || mongoose.model("TrainInfo", trainInfoSchema);

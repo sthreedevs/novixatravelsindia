@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 40" width="140" height="40">
+  <circle cx="18" cy="20" r="14" fill="#0c172e" stroke="#deb06c" stroke-width="1.2"/>
+  <circle cx="18" cy="20" r="10" fill="none" stroke="#deb06c" stroke-width="1"/>
+  <ellipse cx="18" cy="20" rx="5" ry="10" fill="none" stroke="#deb06c" stroke-width="1"/>
+  <line x1="8" y1="20" x2="28" y2="20" stroke="#deb06c" stroke-width="1"/>
+  <line x1="18" y1="10" x2="18" y2="30" stroke="#deb06c" stroke-width="1"/>
+  <text x="38" y="26" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="17" letter-spacing="0.5">
+    <tspan font-weight="800" fill="#ffffff">e</tspan>
+    <tspan font-weight="800" fill="#deb06c">Visa</tspan>
+  </text>
+</svg>

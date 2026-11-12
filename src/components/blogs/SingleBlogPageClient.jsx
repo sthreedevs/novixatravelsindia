@@ -1,222 +1,90 @@
 "use client";
-import axios from "axios";
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 
-export const SingleBlogPageClient = ({ initialBlog, recentBlogs }) => {
-  const router = useRouter();
-  const [blog, setBlog] = useState(initialBlog);
-  const [newComment, setNewComment] = useState({
-    name: "",
-    email: "",
-    comment: "",
-  });
-  const [submitting, setSubmitting] = useState(false);
+import React, { useState, useEffect } from "react";
+import SingleBlogHeroSection from "./SingleBlogHeroSection";
+import BlogTableOfContents from "./BlogTableOfContents";
+import BlogContentSections from "./BlogContentSections";
+import BlogCommentsSection from "./BlogCommentsSection";
+import RelatedBlogsSection from "./RelatedBlogsSection";
+import { ChevronUp } from "lucide-react";
 
-  const handleCommentSubmit = async (e) => {
-    e.preventDefault();
-    if (!newComment.name || !newComment.comment) return;
+export function SingleBlogPageClient({ initialBlog, recentBlogs = [] }) {
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
-    try {
-      setSubmitting(true);
-      await axios.post(`/api/blog/comment/${blog._id}`, newComment);
-      setNewComment({ name: "", email: "", comment: "" });
-      
-      // Optionally re-fetch the blog data from the server or just refresh
-      router.refresh();
-      
-      // Update local state optimistically for instant feedback
-      const newCommentData = { ...newComment, _id: Date.now().toString(), createdAt: new Date().toISOString() };
-      setBlog(prev => ({ ...prev, comments: [...(prev.comments || []), newCommentData] }));
-    } catch (error) {
-      console.error("Error adding comment:", error);
-    } finally {
-      setSubmitting(false);
-    }
+  useEffect(() => {
+    const checkScroll = () => {
+      if (window.pageYOffset > 500) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+
+    window.addEventListener("scroll", checkScroll, { passive: true });
+    return () => window.removeEventListener("scroll", checkScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  if (!blog)
-    return <div className="p-10 text-center text-xl text-gray-200">Blog not found 😕</div>;
+  if (!initialBlog) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-8 bg-[#07080c] text-white">
+        <h2 className="text-2xl font-serif font-bold mb-3">Story Not Found</h2>
+        <p className="text-zinc-400 text-sm mb-6">
+          The requested travel tale could not be found or may have been updated.
+        </p>
+      </div>
+    );
+  }
+
+  const sections = Array.isArray(initialBlog.content) ? initialBlog.content : [];
 
   return (
-    <article className="max-w-6xl mx-auto px-5 py-24 text-gray-100">
-      {/* --- Header with Recent Blogs (Dark Theme + Responsive) --- */}
-      <div className="flex flex-col md:flex-row md:items-start gap-6 mb-12">
-        {/* Left: Main Blog Header */}
-        <div className="relative w-full md:w-4/5 h-[18rem] md:h-[30rem] rounded-2xl overflow-hidden shadow-lg">
-          <Image
-            src={blog?.thumbnail || "/placeholder.jpg"}
-            alt={blog?.title || "thumbnail"}
-            fill
-            sizes="(max-width: 768px) 100vw, 80vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+    <div className="min-h-screen bg-[#07080c] text-zinc-100 selection:bg-[#deb06c] selection:text-black">
+      {/* 1. Shared Dark Luxury Hero Section (Matching Reference Screenshot 1) */}
+      <SingleBlogHeroSection blog={initialBlog} />
 
-          {/* Blog Title */}
-          <h1 className="absolute bottom-4 left-6 text-3xl md:text-4xl font-bold text-white drop-shadow-lg">
-            {blog?.title?.trim()}
-          </h1>
-        </div>
+      {/* 2. Main Content Wrapper: Two-column layout with Table of Contents (Matching Reference Screenshot 2) */}
+      <main className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 py-12 sm:py-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 relative">
+            {/* Left Column: Sticky Table of Contents on Desktop, Collapsible on Mobile */}
+            <aside className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-28 self-start z-20">
+              <BlogTableOfContents sections={sections} />
+            </aside>
 
-        {/* Right: Recent Blogs with Thumbnails (hidden on mobile) */}
-        <div className="hidden md:block md:w-1/5 space-y-4">
-          <h2 className="text-xl font-semibold text-white mb-4 border-b border-gray-600 pb-2">
-            Recent Blogs
-          </h2>
+            {/* Right Column: Structured Sections (with Title, Text, Optional Image, Tags, Share, Bio) */}
+            <div className="lg:col-span-8 xl:col-span-9 min-w-0">
+              <BlogContentSections blog={initialBlog} />
 
-          {recentBlogs?.map((recent) => (
-            <Link
-              key={recent?._id}
-              href={`/blogs/${recent?.slug || recent?._id}`}
-              className="flex items-center gap-3 bg-zinc-800 hover:bg-gray-700 p-3 rounded-lg shadow-md transition-all cursor-pointer"
-            >
-              {/* Thumbnail */}
-              <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden">
-                <Image
-                  src={recent?.thumbnail || "/placeholder.jpg"}
-                  alt={recent?.title || "thumbnail"}
-                  width={64}
-                  height={64}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              {/* Title + Date */}
-              <div className="flex flex-col">
-                <p className="text-gray-200 font-semibold line-clamp-2 text-sm md:text-base">
-                  {recent?.title}
-                </p>
-                <span className="text-xs text-gray-400 mt-1">
-                  {new Date(recent?.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* --- Meta Info --- */}
-      <div className="text-sm text-gray-400 mb-6 border-b border-gray-700 pb-4 flex flex-wrap justify-between">
-        <div>
-          <span className="font-semibold text-orange-500">
-            {blog?.author}
-          </span>{" "}
-          · {new Date(blog?.createdAt).toLocaleDateString()} ·{" "}
-          {blog?.readTime} min read
-        </div>
-
-        <div className="flex gap-2 flex-wrap mt-2 md:mt-0">
-          {blog?.tags?.map((tag, i) => (
-            <span
-              key={i}
-              className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-medium"
-            >
-              #{tag}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* --- Blog Content --- */}
-      <div className="space-y-12 leading-relaxed text-gray-100">
-        {blog?.content?.map((section) => (
-          <div key={section?._id} className="space-y-4">
-            {/* Section Heading */}
-            <h2 className="text-2xl md:text-3xl font-bold text-white">
-              {section?.title}
-            </h2>
-
-            {/* Section Description */}
-            <p className="text-lg text-gray-300">{section?.description}</p>
-
-            {/* Section Image */}
-            {section?.image && (
-              <div className="w-full md:w-4/6 h-72 md:h-80 rounded-lg overflow-hidden shadow-md">
-                <Image
-                  src={section?.image || "/placeholder.jpg"}
-                  alt={section?.title || "section image"}
-                  width={800}
-                  height={400}
-                  className="w-full h-full object-cover hover:scale-[1.03] transition-transform duration-300"
-                />
-              </div>
-            )}
+              {/* Dynamic Comments Section */}
+              <BlogCommentsSection
+                blogId={initialBlog._id || initialBlog.id}
+                initialComments={initialBlog.comments || []}
+              />
+            </div>
           </div>
-        ))}
-      </div>
 
-      {/* --- Comments Section --- */}
-      <section className="mt-16 border-t border-gray-700 pt-10">
-        <h3 className="text-2xl font-bold mb-6 text-white">
-          Comments ({blog?.comments?.length || 0})
-        </h3>
+          {/* 3. Keep Exploring / Related Stories */}
+          <RelatedBlogsSection blogs={recentBlogs} />
+        </div>
+      </main>
 
-        {blog?.comments?.length === 0 ? (
-          <p className="text-gray-400 mb-6 italic">
-            No comments yet. Be the first to share your thoughts!
-          </p>
-        ) : (
-          <div className="space-y-6 mb-10">
-            {blog?.comments?.map((c) => (
-              <div
-                key={c?._id}
-                className="bg-zinc-800 p-4 rounded-lg shadow-md border border-gray-700 transition-transform hover:scale-[1.01]"
-              >
-                <h4 className="font-semibold text-orange-400">{c?.name}</h4>
-                <p className="text-gray-200 mt-1">{c?.comment}</p>
-                <span className="text-xs text-gray-500 mt-2 block">
-                  {new Date(c?.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* --- Add Comment Form --- */}
-        <form
-          onSubmit={handleCommentSubmit}
-          className="bg-orange-50 p-6 rounded-xl shadow-inner space-y-4 text-black"
+      {/* 4. Floating Back to Top Button (Matching Reference Screenshot 2) */}
+      {showScrollTop && (
+        <button
+          type="button"
+          onClick={scrollToTop}
+          title="Back to top"
+          className="fixed bottom-6 right-20 sm:right-24 z-40 w-11 h-11 rounded-full bg-[#11131a] hover:bg-[#deb06c] text-[#deb06c] hover:text-black border border-zinc-700/80 hover:border-[#deb06c] shadow-[0_8px_25px_rgba(0,0,0,0.6)] flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer"
         >
-          <input
-            type="text"
-            placeholder="Your Name *"
-            value={newComment.name}
-            onChange={(e) =>
-              setNewComment({ ...newComment, name: e.target.value })
-            }
-            className="w-full p-3 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
-          />
-          <input
-            type="email"
-            placeholder="Your Email (optional)"
-            value={newComment.email}
-            onChange={(e) =>
-              setNewComment({ ...newComment, email: e.target.value })
-            }
-            className="w-full p-3 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
-          />
-          <textarea
-            placeholder="Write your comment *"
-            value={newComment.comment}
-            onChange={(e) =>
-              setNewComment({ ...newComment, comment: e.target.value })
-            }
-            rows="4"
-            className="w-full p-3 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
-          ></textarea>
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors disabled:opacity-60"
-          >
-            {submitting ? "Posting..." : "Post Comment"}
-          </button>
-        </form>
-      </section>
-    </article>
+          <ChevronUp className="w-5 h-5 stroke-[2.2]" />
+        </button>
+      )}
+    </div>
   );
-};
+}
+
+export default SingleBlogPageClient;

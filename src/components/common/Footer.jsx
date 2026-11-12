@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { MapPin } from "lucide-react";
 
 import { useSelector } from "react-redux";
 
@@ -34,10 +35,14 @@ const footerData = {
     { label: "E-Sim", path: "/services/e-sim" },
   ],
   contactUs: [
-    { label: "Contact Form", href: "/contact" },
-    { label: "Info@novixatravelsindia.com", href: "" },
+    { label: "Contact Form", href: "/contact-us" },
+    { label: "Info@novixatravelsindia.com", href: "mailto:Info@novixatravelsindia.com" },
     { label: "+91 8171244835 / +91 6397574309", href: "tel:+918171244835" },
-    { label: "+91 6397574309 (Whatsapp)", href: "https://wa.me/+916397574309" },
+    { label: "+91 6397574309 (Whatsapp)", href: "https://wa.me/916397574309" },
+    {
+      label: "400-A, 4th Floor, 12 Ajit Singh House, Yusuf Sarai Commercial Complex, New Delhi, 110016",
+      href: "https://maps.google.com/?q=400-A,+4th+Floor,+12+Ajit+Singh+House,+Yusuf+Sarai+Commercial+Complex,+New+Delhi,+110016",
+    },
   ],
   bottomLinks: [
     { label: "Privacy Policy", path: "/privacy-policy" },
@@ -97,7 +102,7 @@ const Footer = ({ initialPackages }) => {
         <div className="flex-1 flex flex-col sm:flex-row justify-between sm:items-center mx-2 w-full">
           <div className="flex-[0.6] flex flex-row items-center gap-6 sm:gap-4">
             <Image
-              src="/logo.png"
+              src="https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332973/logo.png"
               width={96}
               height={96}
               className="size-24 sm:size-18 rounded-full border-2 border-zinc-300 dark:border-zinc-600 shadow-md"
@@ -117,9 +122,9 @@ const Footer = ({ initialPackages }) => {
               We Accept
             </h2>
             <div className="flex space-x-2 justify-start sm:space-x-1">
-              <Image src="/footer/upi.svg" alt="UPI" width={80} height={32} className="h-8 rounded-sm" style={{ width: "auto" }} />
+              <Image src="https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332846/footer/upi.svg" alt="UPI" width={80} height={32} className="h-8 rounded-sm" style={{ width: "auto" }} />
               <Image
-                src="/footer/mc.png"
+                src="https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332971/footer/mc.png"
                 alt="MasterCard"
                 width={80}
                 height={32}
@@ -127,7 +132,7 @@ const Footer = ({ initialPackages }) => {
                 style={{ width: "auto" }}
               />
               <Image
-                src="/footer/amx.png"
+                src="https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332971/footer/amx.png"
                 alt="American"
                 width={80}
                 height={32}
@@ -135,7 +140,7 @@ const Footer = ({ initialPackages }) => {
                 style={{ width: "auto" }}
               />
               <Image
-                src="/footer/visa.png"
+                src="https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332845/footer/visa.png"
                 alt="Visa"
                 width={80}
                 height={32}
@@ -258,15 +263,15 @@ const Footer = ({ initialPackages }) => {
           </div>
 
           {/* Contact Us */}
-          <div>
+          <div className="col-span-2 sm:col-span-1">
             <h3 className="font-semibold text-zinc-800 dark:text-zinc-100 mb-4 text-xl">
               Contact Us
             </h3>
-            <ul className="space-y-2 text-wrap overflow-hidden">
+            <ul className="space-y-2.5 text-wrap">
               <li>
                 <Link
                   href={"/contact-us"}
-                  className="text-zinc-700 dark:text-zinc-300 hover:text-blue-500 dark:hover:text-[#BFA181] hover:underline transition-colors duration-200"
+                  className="text-zinc-700 dark:text-zinc-300 hover:text-blue-500 dark:hover:text-[#BFA181] hover:underline transition-colors duration-200 text-sm"
                 >
                   Contact Form
                 </Link>
@@ -274,22 +279,22 @@ const Footer = ({ initialPackages }) => {
               <li>
                 <a
                   href="mailto:Info@novixatravelsindia.com"
-                  className="text-zinc-700 dark:text-zinc-300 hover:text-blue-500 dark:hover:text-[#BFA181] hover:underline transition-colors duration-200"
+                  className="text-zinc-700 dark:text-zinc-300 hover:text-blue-500 dark:hover:text-[#BFA181] hover:underline transition-colors duration-200 text-sm break-all"
                 >
                   Info@novixatravelsindia.com
                 </a>
               </li>
-              <li className="text-zinc-700 dark:text-zinc-300">
+              <li className="text-zinc-700 dark:text-zinc-300 text-sm">
                 <a
                   href="tel:+916397574309"
-                  className="hover:text-blue-500 dark:hover:text-[#BFA181] hover:underline transition-colors duration-200 text-sm"
+                  className="hover:text-blue-500 dark:hover:text-[#BFA181] hover:underline transition-colors duration-200"
                 >
                   +91 6397574309
                 </a>
-                <span className="text-sm"> / </span>
+                <span> / </span>
                 <a
                   href="tel:+918171244835"
-                  className="hover:text-blue-500 dark:hover:text-[#BFA181] hover:underline transition-colors duration-200 text-sm"
+                  className="hover:text-blue-500 dark:hover:text-[#BFA181] hover:underline transition-colors duration-200"
                 >
                   +91 8171244835
                 </a>
@@ -297,10 +302,28 @@ const Footer = ({ initialPackages }) => {
               <li>
                 <a
                   href="https://wa.me/916397574309"
-                  className="text-zinc-700 dark:text-zinc-300 hover:text-blue-500 dark:hover:text-[#BFA181] hover:underline transition-colors duration-200"
+                  className="text-zinc-700 dark:text-zinc-300 hover:text-blue-500 dark:hover:text-[#BFA181] hover:underline transition-colors duration-200 text-sm"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   +91 6397574309 (Whatsapp)
+                </a>
+              </li>
+              <li className="pt-2 border-t border-zinc-300/70 dark:border-zinc-700/80">
+                <a
+                  href="https://maps.google.com/?q=400-A,+4th+Floor,+12+Ajit+Singh+House,+Yusuf+Sarai+Commercial+Complex,+New+Delhi,+110016"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-start gap-2 text-zinc-600 dark:text-zinc-300 hover:text-blue-500 dark:hover:text-[#BFA181] transition-colors"
+                  title="View Registered Office on Google Maps"
+                >
+                  <MapPin className="w-4 h-4 text-[#BFA181] shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs sm:text-[13px] leading-relaxed">
+                    <strong className="block text-zinc-800 dark:text-zinc-100 font-semibold mb-0.5">
+                      Registered Office:
+                    </strong>
+                    400-A, 4th Floor, 12 Ajit Singh House, Yusuf Sarai Commercial Complex, New Delhi, 110016
+                  </span>
                 </a>
               </li>
             </ul>
@@ -308,34 +331,97 @@ const Footer = ({ initialPackages }) => {
         </div>
       </div>
 
-      {/* Divider Line */}
-      <div className="max-w-full h-[1px] bg-zinc-400 dark:bg-zinc-600 mt-6"></div>
-
-      {/* Foolow links sections */}
-      <div className="py-4 flex flex-col justify-between items-center">
-        <div className="flex space-x-2 sm:space-x-4">
-          {socialIcons.map(({ Icon, href }, index) => (
-            <a
-              key={index}
-              href={href}
-              className="group rounded-full bg-zinc-100 dark:bg-zinc-800 p-3  transition-colors duration-300"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div className="text-zinc-600 dark:text-zinc-300 text-xl">
-                <Icon />
+      {/* Verified Travel Partners & Social Connect */}
+      <div className="w-full px-6 sm:px-12 lg:px-20 py-6 bg-zinc-200/50 dark:bg-zinc-900/40 border-t border-zinc-400/50 dark:border-zinc-700/80 mt-8">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          {/* Verified Badges */}
+          <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+            <div className="flex items-center gap-2">
+              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              <div>
+                <span className="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  Accredited &amp; Trusted
+                </span>
+                <h4 className="text-xs sm:text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+                  Verified Travel Partner
+                </h4>
               </div>
-            </a>
-          ))}
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+              {/* SafarCabby Badge (Logo Only) */}
+              <a
+                href="https://www.safarcabby.com/delhi/novixa-travels-india-delhi-delhi"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="SafarCabby Verified Partner"
+                className="bg-white rounded-xl px-4 py-2 border border-zinc-200 shadow-xs hover:shadow-md hover:border-zinc-300 transition-all flex items-center justify-center h-12 group"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://images.safarcabby.com/badge-logo.png"
+                  alt="SafarCabby Verified Tempo Traveller Service"
+                  style={{ width: "120px", height: "auto", display: "block" }}
+                  className="group-hover:scale-105 transition-transform"
+                />
+              </a>
+
+              {/* TripClap Badge */}
+              <a
+                href="https://www.tripclap.com/partner/novixa-travels-india"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="TripClap Verified Travel Partner"
+                className="bg-white rounded-xl px-3.5 py-2 border border-zinc-200 shadow-xs hover:shadow-md hover:border-zinc-300 transition-all flex items-center gap-2.5 h-12 group"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://www.tripclap.com/assets/images/verified.png"
+                  alt="TripClap Verified Partner"
+                  style={{ height: "32px", width: "auto", border: "none", display: "block" }}
+                  className="shrink-0 group-hover:scale-105 transition-transform"
+                />
+                <div className="flex flex-col text-left leading-tight pr-1">
+                  <span className="text-[13px] font-bold text-zinc-900 tracking-tight font-sans">
+                    TripClap
+                  </span>
+                  <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wider">
+                    Verified Partner
+                  </span>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          {/* Social Links */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider hidden sm:inline-block">
+              Follow Us
+            </span>
+            <div className="flex space-x-2 sm:space-x-3">
+              {socialIcons.map(({ Icon, href }, index) => (
+                <a
+                  key={index}
+                  href={href}
+                  className="rounded-full bg-white dark:bg-zinc-800 p-2.5 text-zinc-600 dark:text-zinc-300 hover:text-white hover:bg-[#BFA181] dark:hover:bg-[#BFA181] dark:hover:text-black shadow-2xs border border-zinc-300/80 dark:border-zinc-700 transition-all duration-300"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Icon className="text-base" />
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Divider Line */}
-      <div className="w-full h-[1px] bg-zinc-400 dark:bg-zinc-600 "></div>
+      <div className="w-full h-[1px] bg-zinc-400 dark:bg-zinc-600"></div>
+
       {/* Bottom Section */}
-      <div className="w-full px-6 sm:px-12 lg:px-20 text-center text-sm py-6 ">
+      <div className="w-full px-6 sm:px-12 lg:px-20 text-center text-sm py-6">
         <p className="text-zinc-700 dark:text-zinc-300">
-          © 2025 Novixa Travel India. All rights reserved.
+          © {new Date().getFullYear()} Novixa Travels India. All rights reserved.
         </p>
         <div className="mt-2">
           {footerData.bottomLinks.map(({ label, path }, index) => (

@@ -57,7 +57,7 @@ export const PackagePageClient = ({ packageData }) => {
               <div className="relative rounded-lg overflow-hidden h-28 md:h-44 lg:h-60 w-full">
                 <Image
                   key={`${item.dayTitle} image1`}
-                  src={item.image1 || "/placeholder.jpg"}
+                  src={item.image1 || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
                   alt={`${item.dayTitle} image1`}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -69,7 +69,7 @@ export const PackagePageClient = ({ packageData }) => {
               <div className="relative rounded-lg overflow-hidden h-28 md:h-44 lg:h-60 w-full">
                 <Image
                   key={`${item.dayTitle} image2`}
-                  src={item.image2 || "/placeholder.jpg"}
+                  src={item.image2 || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
                   alt={`${item.dayTitle} image2`}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

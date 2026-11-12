@@ -10,7 +10,7 @@ export const organizationSchema = {
   description:
     "Novixa Travels India is a comprehensive travel agency offering visa assistance, flights, trains, hotels, tour packages, and more.",
   url: "https://www.novixatravelsindia.com",
-  logo: "https://www.novixatravelsindia.com/logo.png",
+  logo: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332973/logo.png",
   image: "https://www.novixatravelsindia.com/og-image.jpg",
   telephone: "+91-XXXXXXXXXX", // Update with actual number
   email: "contact@novixatravelsindia.com",
@@ -40,7 +40,7 @@ export const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
   name: "Novixa Travels India",
-  image: "https://www.novixatravelsindia.com/logo.png",
+  image: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332973/logo.png",
   description:
     "Premier travel agency in India offering comprehensive travel solutions",
   telephone: "+91-XXXXXXXXXX",
@@ -155,7 +155,7 @@ export const articleSchema = (article) => ({
     name: "Novixa Travels India",
     logo: {
       "@type": "ImageObject",
-      url: "https://www.novixatravelsindia.com/logo.png",
+      url: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332973/logo.png",
     },
   },
 });

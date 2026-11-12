@@ -5,10 +5,12 @@ import {
   Building2,
   FileText,
   Mail,
-  TrendingUp
+  TrendingUp,
+  Image as ImageIcon
 } from "lucide-react";
 import Link from "next/link";
 import { connectDB } from "@/lib/db/index.js";
+import { Carousel } from "@/lib/models/carousel.model.js";
 import { Package } from "@/lib/models/package.model.js";
 import { Destination } from "@/lib/models/destination.model.js";
 import { Hotel } from "@/lib/models/hotel.model.js";
@@ -16,7 +18,10 @@ import { Blog } from "@/lib/models/blog.model.js";
 import { ContactUs } from "@/lib/models/serviceModels/contactUs.model.js";
 import { CustomizePackage } from "@/lib/models/customizePackage.model.js";
 import { Subscriber } from "@/lib/models/subscriber.model.js";
+import { getServiceEnquiryDashboardData } from "@/lib/services/enquiry.service.js";
 import { formatDistanceToNow } from "date-fns";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Admin Dashboard | Novixa",
@@ -31,20 +36,29 @@ export default async function AdminDashboard() {
     destinationsCount,
     hotelsCount,
     blogsCount,
-    enquiriesCount
+    contactEnquiriesCount,
+    customPackagesCount,
+    homeCarouselCount,
+    serviceEnquiryDashboard,
   ] = await Promise.all([
     Package.countDocuments(),
     Destination.countDocuments(),
     Hotel.countDocuments(),
     Blog.countDocuments(),
-    ContactUs.countDocuments()
+    ContactUs.countDocuments(),
+    CustomizePackage.countDocuments(),
+    Carousel.countDocuments({ type: "home" }),
+    getServiceEnquiryDashboardData(10),
   ]);
+
+  const enquiriesCount =
+    contactEnquiriesCount + customPackagesCount + serviceEnquiryDashboard.totalCount;
 
   // Fetch recent activities
   const [recentContactUs, recentCustomPackages, recentSubscribers] = await Promise.all([
-    ContactUs.find().sort({ createdAt: -1 }).limit(5).lean(),
-    CustomizePackage.find().sort({ createdAt: -1 }).limit(5).lean(),
-    Subscriber.find().sort({ createdAt: -1 }).limit(5).lean()
+    ContactUs.find().sort({ createdAt: -1 }).limit(10).lean(),
+    CustomizePackage.find().sort({ createdAt: -1 }).limit(10).lean(),
+    Subscriber.find().sort({ createdAt: -1 }).limit(10).lean()
   ]);
 
   // Combine and sort activities
@@ -69,6 +83,12 @@ export default async function AdminDashboard() {
       iconBg: "bg-blue-100 dark:bg-blue-900/30",
       iconColor: "text-blue-600 dark:text-blue-400"
     })),
+    ...serviceEnquiryDashboard.recentActivities.map(item => ({
+      ...item,
+      icon: Mail,
+      iconBg: "bg-amber-100 dark:bg-amber-900/30",
+      iconColor: "text-amber-600 dark:text-amber-400"
+    })),
     ...recentSubscribers.map(item => ({
       id: item._id.toString(),
       type: "subscriber",
@@ -79,9 +99,10 @@ export default async function AdminDashboard() {
       iconBg: "bg-green-100 dark:bg-green-900/30",
       iconColor: "text-green-600 dark:text-green-400"
     }))
-  ].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+  ].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 20);
 
   const STATS = [
+    { name: "Home Hero Slides", value: homeCarouselCount, icon: ImageIcon, href: "/admin/home-carousel", color: "bg-amber-500" },
     { name: "Total Packages", value: packagesCount, icon: PackageIcon, href: "/admin/packages", color: "bg-blue-500" },
     { name: "Total Destinations", value: destinationsCount, icon: MapPin, href: "/admin/destinations", color: "bg-green-500" },
     { name: "Total Hotels", value: hotelsCount, icon: Building2, href: "/admin/hotels", color: "bg-purple-500" },
@@ -110,8 +131,8 @@ export default async function AdminDashboard() {
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className={`p-3 rounded-md ${stat.color} bg-opacity-10 dark:bg-opacity-20`}>
-                      <Icon className={`w-6 h-6 ${stat.color.replace('bg-', 'text-')}`} aria-hidden="true" />
+                    <div className={`p-3 rounded-md ${stat.color}`}>
+                      <Icon className="w-6 h-6 text-white" aria-hidden="true" />
                     </div>
                   </div>
                   <div className="ml-5 w-0 flex-1">

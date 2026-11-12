@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db/index.js";
 import { ContactUs } from "@/lib/models/serviceModels/contactUs.model.js";
 import { contactUsSchema } from "@/lib/validations/index.js";
 import { sendCreatedEnquiry, sendEnquiryNotificationToAdmin } from "@/lib/utils/emailService.js";
+import { revalidatePath } from "next/cache";
 
 export async function submitContactForm(data) {
   try {
@@ -24,6 +25,11 @@ export async function submitContactForm(data) {
         enquiryId: newContact._id,
       }).catch(console.error);
     }
+
+    try {
+      revalidatePath("/admin");
+      revalidatePath("/admin/enquiries");
+    } catch (_) {}
 
     // Return a plain object to the client because Mongoose documents can't be passed from Server Actions directly
     return {

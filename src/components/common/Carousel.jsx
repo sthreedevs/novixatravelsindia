@@ -21,7 +21,7 @@ const Carousel = ({ data = [] }) => {
         {data?.map((item, index) => (
           <Image
             key={item._id || index}
-            src={item.image || "/placeholder.jpg"}
+            src={item.image || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
             alt={item.title || "Carousel Image"}
             fill
             className={`absolute z-20 block object-cover transition-opacity duration-700 ease-in-out ${

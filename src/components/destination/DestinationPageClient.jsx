@@ -93,7 +93,7 @@ export const DestinationPageClient = ({ data, countryName }) => {
                   <div className="text-sm prose prose-sm dark:prose-invert">
                     {item?.image && (
                       <Image
-                        src={item.image || "/placeholder.jpg"}
+                        src={item.image || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
                         alt={item.title || "thumbnail"}
                         height={400}
                         width={800}
@@ -191,7 +191,7 @@ const HotelCard = ({ hotel, handleFormModal }) => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <Image
-        src={hotel.thumbnail || "/placeholder.jpg"}
+        src={hotel.thumbnail || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
         alt={hotel.name || "hotel"}
         fill
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -235,7 +235,7 @@ const PackageCard = ({ packageData, router }) => {
     >
       <div className="relative h-52 overflow-hidden pointer-events-none">
         <Image
-          src={packageData.thumbnail || "/placeholder.jpg"}
+          src={packageData.thumbnail || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
           alt={packageData.title || "package"}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

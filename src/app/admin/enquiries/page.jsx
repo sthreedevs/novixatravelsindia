@@ -2,6 +2,8 @@ import React from "react";
 import { getContactEnquiries, getBookingEnquiries, getAllServiceEnquiries } from "@/lib/services/enquiry.service";
 import EnquiriesDashboardClient from "./EnquiriesDashboardClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Enquiries Dashboard | Admin",
 };

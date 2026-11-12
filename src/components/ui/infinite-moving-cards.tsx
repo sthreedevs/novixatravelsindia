@@ -108,7 +108,7 @@ const PartnersCard = ({ item }) => {
   return (
     <div className="flex items-center justify-center text-center gap-2 px-4 py-2 m-auto">
       <Image
-        src={item?.image || "/placeholder.jpg"}
+        src={item?.image || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
         alt="logo"
         width={100}
         height={32}

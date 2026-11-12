@@ -2,31 +2,41 @@ import mongoose from "mongoose";
 
 const flightInfoSchema = new mongoose.Schema(
   {
-    //personal info fields
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    email: { type: String, required: true },
-    phone: { type: String, required: true },
+    // Personal info fields
+    firstName: { type: String, default: "Valued" },
+    lastName: { type: String, default: "Traveler" },
+    fullName: { type: String },
+    email: { type: String },
+    phone: { type: String },
+    mobileNumber: { type: String },
     dob: { type: Date },
     gender: { type: String },
 
-    //service fields
-    from: { type: String, required: true },
-    to: { type: String, required: true },
-    nationality: { type: String, required: true },
+    // Service fields
+    from: { type: String },
+    to: { type: String },
+    departureCity: { type: String },
+    arrivalCity: { type: String },
+    nationality: { type: String },
     airline: { type: String },
-    departureDate: { type: Date, required: true },
-    arrivalDate: { type: Date, required: true }, 
+    departureDate: { type: Date },
+    arrivalDate: { type: Date },
+    travelDate: { type: Date },
+    returnDate: { type: Date },
     preferredTime: { type: String },
     numberOfAdults: { type: String },
     numberOfChild: { type: String },
+    numberOfPassengers: { type: String },
+    passengersClass: { type: String },
     travelClass: { type: String },
     tripType: { type: String },
     stop: { type: String },
+    specialRequests: { type: String },
+    message: { type: String },
 
-    documents:{type:[String]} ,
+    documents: { type: [String] },
   },
-  { timestamps: true }
+  { timestamps: true, strict: false }
 );
 
 export const FlightInfo = mongoose.models.FlightInfo || mongoose.model("FlightInfo", flightInfoSchema);

@@ -116,7 +116,7 @@ export default function TestimonialsTableClient({ initialTestimonials }) {
                     <div className="flex items-center">
                       <div className="h-10 w-10 flex-shrink-0 relative rounded-full overflow-hidden bg-gray-100">
                         <img 
-                          src={testimonial.image || "/placeholder.jpg"} 
+                          src={testimonial.image || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"} 
                           alt="" 
                           className="h-10 w-10 object-cover"
                         />

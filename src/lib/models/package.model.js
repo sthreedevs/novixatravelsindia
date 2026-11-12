@@ -11,8 +11,9 @@ const packageSchema = mongoose.Schema(
     description: { type: String, required: true },
     days: { type: Number, required: true },
     nights: { type: Number, required: true },
-    tags: [{ type: String, required: true }],
-    category: [{ type: String, required: true }],
+    tags: [{ type: String }],
+    category: [{ type: String }],
+    travelType: [{ type: String }],
     domesticPrice: { type: String, required: true },
     internationalPrice: { type: String, required: true },
     carouselData: [{ type: mongoose.Schema.Types.ObjectId, ref: "Carousel" }],
@@ -22,13 +23,25 @@ const packageSchema = mongoose.Schema(
     showOnHome: { type: Boolean, default: false },
     inclusions:[{ type: String,  trim: true}],
     exclusions:[{ type: String,  trim: true }],
+    whyChooseImages: {
+      main: { type: String, default: "" },
+      top: { type: String, default: "" },
+      bottom: { type: String, default: "" },
+    },
+    itineraryImage: { type: String, default: "" },
+    faqs: [
+      {
+        question: { type: String, trim: true },
+        answer: { type: String, trim: true },
+      },
+    ],
   },
   {
     timestamps: true,
   }
 );
 
-packageSchema.pre("save", function (next) {
+packageSchema.pre("save", async function () {
   if (this.isModified("title") || !this.slug) {
     this.slug = this.title
       .toString()
@@ -39,7 +52,10 @@ packageSchema.pre("save", function (next) {
       .replace(/^-+/, "")
       .replace(/-+$/, "");
   }
-  next();
 });
 
-export const Package = mongoose.models.Package || mongoose.model("Package", packageSchema);
+if (mongoose.models && mongoose.models.Package) {
+  delete mongoose.models.Package;
+}
+
+export const Package = mongoose.model("Package", packageSchema);

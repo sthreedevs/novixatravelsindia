@@ -1,13 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import { adminLogin } from "@/lib/actions/admin/auth.actions";
-import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export default function AdminLoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,14 +19,16 @@ export default function AdminLoginPage() {
       
       if (res.success) {
         toast.success("Welcome, Admin!");
-        router.push("/admin");
+        // Use full navigation so the browser sends the newly set HttpOnly cookie
+        // cleanly and bypasses stale App Router / middleware redirect cache.
+        window.location.replace("/admin");
       } else {
         toast.error(res.error || "Login failed");
+        setLoading(false);
       }
     } catch (err) {
       console.error(err);
       toast.error("An unexpected error occurred");
-    } finally {
       setLoading(false);
     }
   };

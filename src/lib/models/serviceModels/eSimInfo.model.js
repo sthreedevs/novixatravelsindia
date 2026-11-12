@@ -2,31 +2,24 @@ import mongoose from "mongoose";
 
 const eSimInfoSchema = new mongoose.Schema(
   {
-    firstName: { type: String, required: true },
-    firstNameIV: { type: String, required: true },
+    firstName: { type: String, default: "Valued" },
+    lastName: { type: String, default: "Traveler" },
+    fullName: { type: String },
+    email: { type: String },
+    phone: { type: String },
+    mobileNumber: { type: String },
 
-    lastName: { type: String, required: true },
-    lastNameIV: { type: String, required: true },
+    countryOfTravel: { type: String },
+    destinationCountry: { type: String },
+    destination: { type: String },
+    dataPack: { type: String },
+    selectedDataPlan: { type: String },
+    message: { type: String },
 
-    email: { type: String, required: true },
-    emailIV: { type: String, required: true },
-
-    phone: { type: String, required: true },
-    phoneIV: { type: String, required: true },
-
-    countryOfTravel: { type: String, required: true },
-    countryOfTravelIV: { type: String, required: true },
-
-    selectedDataPlan: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "ESimPlan",
-      required: true,
-    },
-
-    document: { type: String, required: true },
-    documentIV: { type: String, required: true },
+    document: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true, strict: false }
 );
 
-export const ESimInfo = mongoose.models.ESimInfo || mongoose.model("ESimInfo", eSimInfoSchema);
+export const ESimInfo =
+  mongoose.models.ESimInfo || mongoose.model("ESimInfo", eSimInfoSchema);

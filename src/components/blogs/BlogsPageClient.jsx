@@ -1,46 +1,74 @@
 "use client";
+
 import React, { useState, useMemo } from "react";
-import { HoverEffect } from "@/components/ui/card-hover-effect";
+import BlogHeroSection from "./BlogHeroSection";
+import BlogCategoryFilterBar from "./BlogCategoryFilterBar";
+import BlogGridSection from "./BlogGridSection";
+import BlogNewsletterCTA from "./BlogNewsletterCTA";
 
-export const BlogsPageClient = ({ initialBlogs }) => {
-  const [blogs] = useState(initialBlogs || []);
-  const [activeTag, setActiveTag] = useState(null);
+export function BlogsPageClient({ initialBlogs = [] }) {
+  const [activeCategory, setActiveCategory] = useState("all");
 
-  const allTags = useMemo(() => {
-    const tagSet = new Set();
-    blogs.forEach((blog) => blog.tags?.forEach((tag) => tagSet.add(tag)));
-    return Array.from(tagSet);
-  }, [blogs]);
+  // Dynamically extract unique categories/tags from all database blogs
+  const categories = useMemo(() => {
+    const tagMap = new Map();
 
-  const filtered = activeTag
-    ? blogs.filter((b) => b.tags?.includes(activeTag))
-    : blogs;
+    initialBlogs.forEach((blog) => {
+      if (Array.isArray(blog?.tags)) {
+        blog.tags.forEach((tag) => {
+          if (!tag) return;
+          const clean = tag.trim();
+          if (clean && clean.length <= 25) {
+            const key = clean.toLowerCase();
+            if (!tagMap.has(key)) {
+              tagMap.set(key, clean);
+            }
+          }
+        });
+      }
+    });
+
+    const dynamicTags = Array.from(tagMap.values());
+    return ["all", ...dynamicTags];
+  }, [initialBlogs]);
+
+  // Filter blogs according to active dynamic category tag
+  const filteredBlogs = useMemo(() => {
+    if (!activeCategory || activeCategory === "all") {
+      return initialBlogs;
+    }
+
+    const target = activeCategory.toLowerCase();
+    return initialBlogs.filter((blog) => {
+      const tags = Array.isArray(blog?.tags)
+        ? blog.tags.map((t) => (t || "").toLowerCase().trim())
+        : [];
+      return tags.includes(target);
+    });
+  }, [initialBlogs, activeCategory]);
 
   return (
-    <section className="max-w-7xl mx-auto px-4 py-24">
-      <div className="flex flex-wrap gap-3 justify-center mb-8">
-        <button
-          className={`px-4 py-1 rounded-full border ${
-            !activeTag ? "bg-neutral-50/20 text-white" : ""
-          }`}
-          onClick={() => setActiveTag(null)}
-        >
-          All
-        </button>
-        {allTags.map((tag) => (
-          <button
-            key={tag}
-            className={`px-4 py-1 rounded-full border ${
-              activeTag === tag ? "bg-neutral-50/20 text-white" : ""
-            }`}
-            onClick={() => setActiveTag(tag)}
-          >
-            {tag}
-          </button>
-        ))}
-      </div>
+    <div className="min-h-screen bg-[#07080c] text-zinc-100 selection:bg-[#deb06c] selection:text-black">
+      {/* 1. Dramatic Dark Luxury Travel Hero Section */}
+      <BlogHeroSection />
 
-      <HoverEffect items={filtered} />
-    </section>
+      {/* 2. Dynamic Horizontal Category Filter Pills Bar */}
+      <BlogCategoryFilterBar
+        categories={categories}
+        activeCategory={activeCategory}
+        onSelectCategory={setActiveCategory}
+      />
+
+      {/* 3. 3-Column Dynamic Blog Cards Grid */}
+      <BlogGridSection
+        blogs={filteredBlogs}
+        onResetFilter={() => setActiveCategory("all")}
+      />
+
+      {/* 4. Full-Width Stay Updated Newsletter CTA Banner */}
+      <BlogNewsletterCTA />
+    </div>
   );
-};
+}
+
+export default BlogsPageClient;
