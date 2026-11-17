@@ -6,6 +6,7 @@ import { Pencil, Search, ArrowUpDown, Briefcase, Plus, Eye } from "lucide-react"
 import DeletePackageButton from "./DeletePackageButton";
 import { Input } from "@/components/ui/input";
 import { STANDARD_TRAVEL_TYPES } from "./TravelTypeMultiSelect";
+import { getPackageDuration } from "@/lib/utils/packageDuration";
 
 export default function PackagesTableClient({ initialPackages }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -69,8 +70,10 @@ export default function PackagesTableClient({ initialPackages }) {
         bVal = Number((b.domesticPrice || "0").replace(/[^0-9]/g, ""));
       }
       if (sortConfig.key === "duration") {
-        aVal = (a.days || 0) + (a.nights || 0);
-        bVal = (b.days || 0) + (b.nights || 0);
+        const aDur = getPackageDuration(a);
+        const bDur = getPackageDuration(b);
+        aVal = (aDur.days || 0) + (aDur.nights || 0);
+        bVal = (bDur.days || 0) + (bDur.nights || 0);
       }
 
       if (aVal < bVal) return sortConfig.direction === "asc" ? -1 : 1;
@@ -293,7 +296,10 @@ export default function PackagesTableClient({ initialPackages }) {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-xs font-semibold text-gray-600 dark:text-gray-300">
-                      {pkg.days}D / {pkg.nights}N
+                      {(() => {
+                        const { days, nights } = getPackageDuration(pkg);
+                        return `${days}D / ${nights}N`;
+                      })()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-white">
                       ₹{pkg.domesticPrice}

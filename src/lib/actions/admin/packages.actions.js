@@ -7,6 +7,7 @@ import { Carousel } from "@/lib/models/carousel.model.js";
 import { uploadOnCloudinary } from "@/lib/utils/cloudinary.js";
 import { revalidatePath } from "next/cache";
 import mongoose from "mongoose";
+import { getPackageDuration } from "@/lib/utils/packageDuration.js";
 
 function parseFaqsData(raw) {
   if (!raw) return [];
@@ -128,14 +129,21 @@ export async function createPackage(formData) {
     }
 
     // 5. Create Package
+    const duration = getPackageDuration({
+      title: formData.get("title"),
+      days: Number(formData.get("days")),
+      nights: Number(formData.get("nights")),
+      timeline: timelineIds,
+    });
+
     const newPackage = await Package.create({
       title: formData.get("title"),
       city: formData.get("city"),
       destinations: formData.get("destinations"),
       country: formData.get("country"),
       description: formData.get("description"),
-      days: Number(formData.get("days")),
-      nights: Number(formData.get("nights")),
+      days: duration.days,
+      nights: duration.nights,
       domesticPrice: formData.get("domesticPrice"),
       internationalPrice: formData.get("internationalPrice"),
       showOnHome: formData.get("showOnHome") === "true",
@@ -331,14 +339,21 @@ export async function updatePackage(id, formData) {
     }
 
     // 5. Update Package
+    const duration = getPackageDuration({
+      title: formData.get("title"),
+      days: Number(formData.get("days")),
+      nights: Number(formData.get("nights")),
+      timeline: timelineIds,
+    });
+
     await Package.findByIdAndUpdate(id, {
       title: formData.get("title"),
       city: formData.get("city"),
       destinations: formData.get("destinations"),
       country: formData.get("country"),
       description: formData.get("description"),
-      days: Number(formData.get("days")),
-      nights: Number(formData.get("nights")),
+      days: duration.days,
+      nights: duration.nights,
       domesticPrice: formData.get("domesticPrice"),
       internationalPrice: formData.get("internationalPrice"),
       showOnHome: formData.get("showOnHome") === "true",

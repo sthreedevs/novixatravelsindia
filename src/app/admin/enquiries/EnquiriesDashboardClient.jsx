@@ -206,8 +206,22 @@ export default function EnquiriesDashboardClient({ contacts, bookings, services 
           )}
 
           {/* Flight enquiries */}
-          {type === "flight" && item.passengersClass && (
-            <div><span className="text-gray-500">Passengers &amp; Class:</span> {item.passengersClass}</div>
+          {type === "flight" && (
+            <>
+              {item.passengersClass && (
+                <div><span className="text-gray-500">Passengers &amp; Class:</span> {item.passengersClass}</div>
+              )}
+              {!item.passengersClass && (item.numberOfAdults || item.numberOfChild || item.travelClass) && (
+                <div>
+                  <span className="text-gray-500">Travelers &amp; Class:</span>{" "}
+                  {[
+                    item.numberOfAdults ? `${item.numberOfAdults} Adult(s)` : "",
+                    item.numberOfChild ? `${item.numberOfChild} Child(ren)` : "",
+                    item.travelClass || "",
+                  ].filter(Boolean).join(", ")}
+                </div>
+              )}
+            </>
           )}
 
           {/* Train enquiries */}

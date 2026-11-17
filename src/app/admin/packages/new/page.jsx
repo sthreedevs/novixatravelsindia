@@ -50,10 +50,24 @@ export default function NewPackagePage() {
 
   const handleTextChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    setFormData((prev) => {
+      const next = {
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      };
+      // Auto-extract days and nights if typing title and fields are empty
+      if (name === "title" && (!prev.days || !prev.nights)) {
+        const nMatch = value.match(/(\d+)\s*(?:nights?|n\b)/i);
+        const dMatch = value.match(/(\d+)\s*(?:days?|d\b)/i);
+        if (!prev.nights && nMatch) {
+          next.nights = nMatch[1];
+        }
+        if (!prev.days && dMatch) {
+          next.days = dMatch[1];
+        }
+      }
+      return next;
+    });
   };
 
   const handleTimelineChange = (index, field, value) => {
@@ -76,6 +90,12 @@ export default function NewPackagePage() {
     }
     if (!travelType || travelType.length === 0) {
       return toast.error("Please select at least one Travel Type.");
+    }
+    if (!formData.days || Number(formData.days) <= 0) {
+      return toast.error("Please enter a valid number of Days (greater than 0).");
+    }
+    if (!formData.nights || Number(formData.nights) <= 0) {
+      return toast.error("Please enter a valid number of Nights (greater than 0).");
     }
 
     const hasIncompleteFaq = faqs.some(
@@ -274,6 +294,8 @@ export default function NewPackagePage() {
                   <Input
                     type="number"
                     name="days"
+                    min="1"
+                    required
                     value={formData.days}
                     onChange={handleTextChange}
                     placeholder="5"
@@ -286,6 +308,8 @@ export default function NewPackagePage() {
                   <Input
                     type="number"
                     name="nights"
+                    min="1"
+                    required
                     value={formData.nights}
                     onChange={handleTextChange}
                     placeholder="4"

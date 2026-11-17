@@ -11,10 +11,13 @@ import { ArrowLeft, Plus, Trash2, Image as ImageIcon, Calendar, Layers, Eye, Hel
 import Link from "next/link";
 import TravelTypeMultiSelect from "../TravelTypeMultiSelect";
 import PackageFaqsEditor from "../PackageFaqsEditor";
+import { getPackageDuration } from "@/lib/utils/packageDuration";
 
 export default function EditPackageClient({ pkg }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+
+  const initialDuration = getPackageDuration(pkg);
 
   const [formData, setFormData] = useState({
     title: pkg.title || "",
@@ -22,8 +25,8 @@ export default function EditPackageClient({ pkg }) {
     destinations: pkg.destinations || "",
     country: pkg.country || "",
     description: pkg.description || "",
-    days: pkg.days || "",
-    nights: pkg.nights || "",
+    days: (pkg.days && pkg.days > 0) ? pkg.days : initialDuration.days,
+    nights: (pkg.nights && pkg.nights > 0) ? pkg.nights : initialDuration.nights,
     domesticPrice: pkg.domesticPrice || "",
     internationalPrice: pkg.internationalPrice || "",
     showOnHome: pkg.showOnHome || false,
@@ -104,6 +107,12 @@ export default function EditPackageClient({ pkg }) {
     }
     if (!travelType || travelType.length === 0) {
       return toast.error("Please select at least one Travel Type.");
+    }
+    if (!formData.days || Number(formData.days) <= 0) {
+      return toast.error("Please provide a valid number of Days (greater than 0).");
+    }
+    if (!formData.nights || Number(formData.nights) <= 0) {
+      return toast.error("Please provide a valid number of Nights (greater than 0).");
     }
 
     const hasIncompleteFaq = faqs.some(
@@ -295,13 +304,13 @@ export default function EditPackageClient({ pkg }) {
                   <label className="block text-sm font-medium mb-1">
                     Days <span className="text-red-500">*</span>
                   </label>
-                  <Input type="number" name="days" value={formData.days} onChange={handleTextChange} />
+                  <Input type="number" name="days" min="1" required value={formData.days} onChange={handleTextChange} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     Nights <span className="text-red-500">*</span>
                   </label>
-                  <Input type="number" name="nights" value={formData.nights} onChange={handleTextChange} />
+                  <Input type="number" name="nights" min="1" required value={formData.nights} onChange={handleTextChange} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">

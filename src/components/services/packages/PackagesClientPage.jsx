@@ -6,6 +6,7 @@ import PackagesHeroSection from "./PackagesHeroSection";
 import PackagesGridSection from "./PackagesGridSection";
 import PackagesBottomCtaBanner from "./PackagesBottomCtaBanner";
 import PackageEnquiryModal from "./PackageEnquiryModal";
+import { getPackageDuration } from "@/lib/utils/packageDuration";
 
 export default function PackagesClientPage({ dbPackages = [] }) {
   // Filter & Search states
@@ -59,15 +60,17 @@ export default function PackagesClientPage({ dbPackages = [] }) {
       const destinationName =
         pkg.destinations || pkg.city || pkg.country || "India";
 
+      const { days: resolvedDays, nights: resolvedNights } = getPackageDuration(pkg);
+
       return {
         _id: pkg._id.toString(),
         slug: pkg.slug || pkg._id.toString(),
         title: pkg.title,
         badge: primaryBadge,
         travelType: cleanTravelTypes,
-        duration: `${pkg.nights || 4} Nights / ${pkg.days || 5} Days`,
-        days: pkg.days || 5,
-        nights: pkg.nights || 4,
+        duration: `${resolvedNights} Nights / ${resolvedDays} Days`,
+        days: resolvedDays,
+        nights: resolvedNights,
         type: isDomestic ? "Domestic" : "International",
         destination: destinationName,
         country: pkg.country || destinationName,
@@ -90,12 +93,16 @@ export default function PackagesClientPage({ dbPackages = [] }) {
   const dynamicDestinations = useMemo(() => {
     const set = new Set(["All Destinations"]);
     allAvailablePackages.forEach((pkg) => {
-      if (pkg.destination) set.add(pkg.destination.trim());
+      if (pkg.destination) {
+        // If package has multiple destinations separated by commas, add each individually
+        const parts = pkg.destination.split(/[,•|/]/).map((p) => p.trim()).filter(Boolean);
+        parts.forEach((p) => set.add(p));
+      }
       if (pkg.country) set.add(pkg.country.trim());
     });
     // Add popular standards if set has few entries
     if (set.size < 4) {
-      ["Dubai", "Maldives", "Thailand", "Bali", "Switzerland", "Goa", "Kashmir", "Andaman"].forEach((d) =>
+      ["Dubai", "Maldives", "Thailand", "Bali", "Switzerland", "Goa", "Kashmir", "Andaman", "Kerala"].forEach((d) =>
         set.add(d)
       );
     }

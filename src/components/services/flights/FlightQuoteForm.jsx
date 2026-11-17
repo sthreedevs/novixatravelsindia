@@ -6,6 +6,8 @@ import {
   MapPin,
   Calendar as CalendarIcon,
   User,
+  Users,
+  Armchair,
   Phone,
   ShieldCheck,
   ArrowRight,
@@ -18,7 +20,9 @@ export default function FlightQuoteForm({ selectedCity, onResetSelectedCity }) {
   const [toCity, setToCity] = useState(selectedCity || "");
   const [departureDate, setDepartureDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
-  const [passengersClass, setPassengersClass] = useState("1 Adult, Economy");
+  const [adults, setAdults] = useState("1");
+  const [children, setChildren] = useState("0");
+  const [travelClass, setTravelClass] = useState("Economy");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [specialRequests, setSpecialRequests] = useState("");
@@ -42,6 +46,8 @@ export default function FlightQuoteForm({ selectedCity, onResetSelectedCity }) {
       return;
     }
 
+    const computedPassengersClass = `${adults} Adult${Number(adults) > 1 || String(adults).includes("+") ? "s" : ""}${Number(children) > 0 ? `, ${children} Child${Number(children) > 1 || String(children).includes("+") ? "ren" : ""}` : ""}, ${travelClass}`;
+
     setIsSubmitting(true);
     try {
       const res = await submitEnquiry("flight", {
@@ -49,7 +55,12 @@ export default function FlightQuoteForm({ selectedCity, onResetSelectedCity }) {
         to: toCity.trim(),
         departureDate,
         returnDate,
-        passengersClass,
+        adults,
+        numberOfAdults: adults,
+        children,
+        numberOfChild: children,
+        travelClass,
+        passengersClass: computedPassengersClass,
         fullName: fullName.trim(),
         phone: phone.trim(),
         specialRequests: specialRequests.trim(),
@@ -63,6 +74,9 @@ export default function FlightQuoteForm({ selectedCity, onResetSelectedCity }) {
         setToCity("");
         setDepartureDate("");
         setReturnDate("");
+        setAdults("1");
+        setChildren("0");
+        setTravelClass("Economy");
         setFullName("");
         setPhone("");
         setSpecialRequests("");
@@ -172,20 +186,80 @@ export default function FlightQuoteForm({ selectedCity, onResetSelectedCity }) {
           </div>
         </div>
 
-        {/* Row 3: Passengers & Class */}
+        {/* Row 3: Passengers (Adults & Children Dropdowns) */}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-[11px] font-semibold text-zinc-700 mb-1">
+              Adults (12+ Yrs)
+            </label>
+            <div className="relative flex items-center">
+              <User className="w-3.5 h-3.5 text-zinc-500 absolute left-3 pointer-events-none" />
+              <select
+                value={adults}
+                onChange={(e) => setAdults(e.target.value)}
+                className="w-full pl-8 pr-7 py-2 text-xs bg-white border border-zinc-200 rounded-lg text-zinc-800 focus:outline-none focus:border-[#deb06c] focus:ring-1 focus:ring-[#deb06c] transition appearance-none cursor-pointer"
+              >
+                <option value="1">1 Adult</option>
+                <option value="2">2 Adults</option>
+                <option value="3">3 Adults</option>
+                <option value="4">4 Adults</option>
+                <option value="5">5 Adults</option>
+                <option value="6">6 Adults</option>
+                <option value="7">7 Adults</option>
+                <option value="8">8 Adults</option>
+                <option value="9+">9+ Adults</option>
+              </select>
+              <div className="pointer-events-none absolute right-2.5 text-zinc-400 text-[10px]">
+                ▼
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-semibold text-zinc-700 mb-1">
+              Children (2–11 Yrs)
+            </label>
+            <div className="relative flex items-center">
+              <Users className="w-3.5 h-3.5 text-zinc-500 absolute left-3 pointer-events-none" />
+              <select
+                value={children}
+                onChange={(e) => setChildren(e.target.value)}
+                className="w-full pl-8 pr-7 py-2 text-xs bg-white border border-zinc-200 rounded-lg text-zinc-800 focus:outline-none focus:border-[#deb06c] focus:ring-1 focus:ring-[#deb06c] transition appearance-none cursor-pointer"
+              >
+                <option value="0">0 Children</option>
+                <option value="1">1 Child</option>
+                <option value="2">2 Children</option>
+                <option value="3">3 Children</option>
+                <option value="4">4 Children</option>
+                <option value="5+">5+ Children</option>
+              </select>
+              <div className="pointer-events-none absolute right-2.5 text-zinc-400 text-[10px]">
+                ▼
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Row 4: Travel Class Dropdown */}
         <div>
           <label className="block text-[11px] font-semibold text-zinc-700 mb-1">
-            Passengers &amp; Class
+            Travel Class
           </label>
           <div className="relative flex items-center">
-            <User className="w-3.5 h-3.5 text-zinc-500 absolute left-3 pointer-events-none" />
-            <input
-              type="text"
-              value={passengersClass}
-              onChange={(e) => setPassengersClass(e.target.value)}
-              placeholder="1 Adult, Economy"
-              className="w-full pl-8 pr-2.5 py-2 text-xs bg-white border border-zinc-200 rounded-lg text-zinc-800 placeholder:text-zinc-400 focus:outline-none focus:border-[#deb06c] focus:ring-1 focus:ring-[#deb06c] transition"
-            />
+            <Armchair className="w-3.5 h-3.5 text-zinc-500 absolute left-3 pointer-events-none" />
+            <select
+              value={travelClass}
+              onChange={(e) => setTravelClass(e.target.value)}
+              className="w-full pl-8 pr-7 py-2 text-xs bg-white border border-zinc-200 rounded-lg text-zinc-800 focus:outline-none focus:border-[#deb06c] focus:ring-1 focus:ring-[#deb06c] transition appearance-none cursor-pointer"
+            >
+              <option value="Economy">Economy</option>
+              <option value="Premium Economy">Premium Economy</option>
+              <option value="Business Class">Business Class</option>
+              <option value="First Class">First Class</option>
+            </select>
+            <div className="pointer-events-none absolute right-2.5 text-zinc-400 text-[10px]">
+              ▼
+            </div>
           </div>
         </div>
 

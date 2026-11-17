@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Plane, Building, ShieldCheck, Heart, ArrowRight } from "lucide-react";
+import { Building, ShieldCheck, Heart, ArrowRight } from "lucide-react";
 import PackageSpecsBar from "./PackageSpecsBar";
 
 export default function PackageDetailHero({ packageData, onOpenQuote }) {
@@ -13,8 +13,20 @@ export default function PackageDetailHero({ packageData, onOpenQuote }) {
     titleHighlight,
     subtitle,
     heroImage,
+    heroBadges,
     specs,
-  } = packageData;
+  } = packageData || {};
+
+  const resolvedBadges =
+    Array.isArray(heroBadges) && heroBadges.length > 0
+      ? heroBadges.filter(
+          (b) => !b?.text?.toLowerCase().includes("flight")
+        )
+      : [
+          { text: "Luxury Resorts (4★ / 5★ Options)", icon: "resort" },
+          { text: "Travel Insurance Optional", icon: "shield" },
+          { text: "Customizable Itinerary", icon: "heart" },
+        ];
 
   return (
     <section className="relative w-full overflow-visible pt-28 pb-16 sm:pt-32 sm:pb-20 lg:pt-36 lg:pb-24 xl:pt-40 xl:pb-28 min-h-[560px] sm:min-h-[600px] lg:min-h-[640px] flex flex-col justify-between">
@@ -73,24 +85,20 @@ export default function PackageDetailHero({ packageData, onOpenQuote }) {
             </p>
           )}
 
-          {/* 4 Feature Badges Row */}
+          {/* Feature Badges Row (No Flights Included) */}
           <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-2 pb-2 text-xs sm:text-sm text-zinc-100 font-medium drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
-            <div className="flex items-center gap-2">
-              <Plane className="w-4 h-4 text-[#deb06c] shrink-0 rotate-[-20deg]" />
-              <span>Flights Included</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Building className="w-4 h-4 text-[#deb06c] shrink-0" />
-              <span>Luxury Resorts (4★ / 5★ Options)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#deb06c] shrink-0" />
-              <span>Travel Insurance Optional</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Heart className="w-4 h-4 text-[#deb06c] shrink-0 fill-[#deb06c]/20" />
-              <span>Customizable Itinerary</span>
-            </div>
+            {resolvedBadges.map((badge, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                {badge.icon === "shield" ? (
+                  <ShieldCheck className="w-4 h-4 text-[#deb06c] shrink-0" />
+                ) : badge.icon === "heart" ? (
+                  <Heart className="w-4 h-4 text-[#deb06c] shrink-0 fill-[#deb06c]/20" />
+                ) : (
+                  <Building className="w-4 h-4 text-[#deb06c] shrink-0" />
+                )}
+                <span>{badge.text}</span>
+              </div>
+            ))}
           </div>
 
           {/* Dual Action CTA Buttons */}

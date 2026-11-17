@@ -9,6 +9,7 @@ import { setModalForm } from "@/redux/uiSlice";
 import { Timeline } from "@/components/ui/timeline";
 import { FaBed, FaRegClock, FaCreditCard, FaCity, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import axios from "axios";
+import { getPackageDuration } from "@/lib/utils/packageDuration";
 
 export const PackagePageClient = ({ packageData }) => {
   const [location, setLocation] = useState({});
@@ -85,16 +86,17 @@ export const PackagePageClient = ({ packageData }) => {
 
   const details = useMemo(() => {
     if (!packageData) return [];
+    const { days, nights } = getPackageDuration(packageData);
     return [
       {
         icon: <FaBed size={24} />,
-        title: `${packageData.days} Days Stay`,
-        description: `Relax and unwind with a ${packageData.days} days stay at top hotels.`,
+        title: `${days} Days Stay`,
+        description: `Relax and unwind with a ${days} days stay at top hotels.`,
       },
       {
         icon: <FaRegClock size={24} />,
-        title: `${packageData.nights} Nights`,
-        description: `Stay for ${packageData.nights} unforgettable nights exploring the city.`,
+        title: `${nights} Nights`,
+        description: `Stay for ${nights} unforgettable nights exploring the city.`,
       },
       {
         icon: <FaCity size={24} />,

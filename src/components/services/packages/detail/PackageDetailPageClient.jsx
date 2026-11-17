@@ -30,6 +30,7 @@ export default function PackageDetailPageClient({ packageData }) {
       <PackageItinerarySection
         itinerary={packageData.itinerary}
         inclusions={packageData.inclusions}
+        exclusions={packageData.exclusions}
         price={packageData.price}
         priceUnit={packageData.priceUnit}
         centerImage={packageData.itineraryImage}

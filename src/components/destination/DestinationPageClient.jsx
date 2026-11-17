@@ -8,6 +8,7 @@ import { FaMapMarkerAlt, FaRegClock } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setModalForm } from "@/redux/uiSlice";
+import { getPackageDuration } from "@/lib/utils/packageDuration";
 
 export const DestinationPageClient = ({ data, countryName }) => {
   const dispatch = useDispatch();
@@ -246,13 +247,18 @@ const PackageCard = ({ packageData, router }) => {
       </div>
       <div className="p-4 text-gray-800 dark:text-zinc-200">
         <h3 className="text-lg font-semibold">{packageData.title}</h3>
-        <div className="flex items-center text-sm text-gray-500 dark:text-zinc-400 mt-1">
-          <FaMapMarkerAlt className="mr-2 text-red-500" />
-          {packageData.destinations}
+        <div className="flex items-center text-sm text-gray-500 dark:text-zinc-400 mt-1 min-w-0">
+          <FaMapMarkerAlt className="mr-2 text-red-500 shrink-0" />
+          <span className="truncate" title={packageData.destinations}>
+            {packageData.destinations}
+          </span>
         </div>
         <div className="flex items-center text-sm text-gray-500 dark:text-zinc-400 mt-1">
           <FaRegClock className="mr-2 text-blue-500" />
-          {packageData.days} Days / {packageData.nights} Nights
+          {(() => {
+            const { days, nights } = getPackageDuration(packageData);
+            return `${days} Days / ${nights} Nights`;
+          })()}
         </div>
       </div>
       <div

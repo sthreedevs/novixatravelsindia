@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { toTitleCase } from "@/lib/utils";
+import { getPackageDuration } from "@/lib/utils/packageDuration";
 
 export const TestimonialCard = ({ index, data }) => (
   <div
@@ -92,47 +93,50 @@ export const TrendingPackages = ({ packages = [] }) => {
           className="flex gap-5 overflow-x-auto overflow-y-hidden scroll-smooth no-scrollbar snap-x snap-mandatory px-2 md:px-6 py-4 items-stretch"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {packages.map((pkg) => (
-            <div
-              key={pkg._id}
-              className="flex-shrink-0 bg-[#141414] rounded-3xl w-[85%] sm:w-[280px] md:w-[320px] lg:w-[350px] shadow-md border border-gray-800 hover:scale-[1.02] transition-transform duration-300 ease-in-out snap-start flex flex-col justify-between overflow-hidden"
-            >
-              <div className="relative w-full h-56 shrink-0">
-                <Image
-                  src={pkg.thumbnail || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
-                  alt={pkg.title || "Package"}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="rounded-t-3xl object-cover"
-                />
-              </div>
-              <div className="p-5 text-center flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-xl md:text-2xl font-bold text-[#bba477] mb-3 capitalize line-clamp-2 min-h-[3.5rem] flex items-center justify-center">
-                    {pkg.title}
-                  </h3>
-                  <p className="text-gray-400 text-sm line-clamp-2 mb-4">
-                    {pkg.description}
-                  </p>
+          {packages.map((pkg) => {
+            const { days, nights } = getPackageDuration(pkg);
+            return (
+              <div
+                key={pkg._id}
+                className="flex-shrink-0 bg-[#141414] rounded-3xl w-[85%] sm:w-[280px] md:w-[320px] lg:w-[350px] shadow-md border border-gray-800 hover:scale-[1.02] transition-transform duration-300 ease-in-out snap-start flex flex-col justify-between overflow-hidden"
+              >
+                <div className="relative w-full h-56 shrink-0">
+                  <Image
+                    src={pkg.thumbnail || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332976/placeholder.png"}
+                    alt={pkg.title || "Package"}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="rounded-t-3xl object-cover"
+                  />
                 </div>
-                <div>
-                  <div className="flex justify-between border-t border-b border-gray-700 py-3 mb-5 text-[#bba477] font-semibold text-sm md:text-base">
-                    <span>{pkg.nights} Nights</span>
-                    <span>{pkg.days} Days</span>
+                <div className="p-5 text-center flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-xl md:text-2xl font-bold text-[#bba477] mb-3 capitalize line-clamp-2 min-h-[3.5rem] flex items-center justify-center">
+                      {pkg.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm line-clamp-2 mb-4">
+                      {pkg.description}
+                    </p>
                   </div>
-                  <p className="text-[#bba477] font-semibold mb-4 text-lg">
-                    Starting From ₹{pkg.domesticPrice}
-                  </p>
-                  <Link
-                    href={`/services/packages/${pkg.slug || pkg._id}`}
-                    className="block bg-[#bba477] hover:bg-[#cbb982] text-black font-semibold rounded-xl px-6 py-2.5 w-full text-center transition-colors"
-                  >
-                    View Details
-                  </Link>
+                  <div>
+                    <div className="flex justify-between border-t border-b border-gray-700 py-3 mb-5 text-[#bba477] font-semibold text-sm md:text-base">
+                      <span>{nights} Nights</span>
+                      <span>{days} Days</span>
+                    </div>
+                    <p className="text-[#bba477] font-semibold mb-4 text-lg">
+                      Starting From ₹{pkg.domesticPrice}
+                    </p>
+                    <Link
+                      href={`/services/packages/${pkg.slug || pkg._id}`}
+                      className="block bg-[#bba477] hover:bg-[#cbb982] text-black font-semibold rounded-xl px-6 py-2.5 w-full text-center transition-colors"
+                    >
+                      View Details
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <button

@@ -1,3 +1,6 @@
+import { getPackageDuration } from "@/lib/utils/packageDuration";
+import { toTitleCase } from "@/lib/utils";
+
 export const packagesHeroData = {
   tag: "EXPLORE OUR",
   title: "Travel Packages",
@@ -290,7 +293,6 @@ export const detailedPackageTemplates = {
       "Crystal clear waters, private villas, breathtaking sunsets and unforgettable moments — your dream honeymoon starts here.",
     heroImage: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332952/backgrounds/hotelsHero.png",
     heroBadges: [
-      { text: "Flights Included", icon: "plane" },
       { text: "Luxury Resorts (4★ / 5★ Options)", icon: "resort" },
       { text: "Travel Insurance Optional", icon: "shield" },
       { text: "Customizable Itinerary", icon: "heart" },
@@ -327,12 +329,18 @@ export const detailedPackageTemplates = {
       { day: "06", title: "Day 6 – Departure", desc: "Transfer to airport with beautiful memories." },
     ],
     inclusions: [
-      "Round Trip Flights (DEL – Maldives)",
       "5 Nights Stay in 4★ / 5★ Resort",
       "Daily Breakfast & Dinner",
       "Airport Transfers",
       "Guided Excursions & Water Activities",
       "Travel Insurance (Optional)",
+    ],
+    exclusions: [
+      "International Flight Tickets",
+      "Visa & Travel Insurance (unless specified)",
+      "Lunch & Personal Shopping Expenses",
+      "Optional Water Sports & Scuba Diving",
+      "Driver / Guide Tips & Gratuities",
     ],
     price: "1,25,000*",
     priceUnit: "per couple (approx.)",
@@ -356,7 +364,6 @@ export const detailedPackageTemplates = {
       "Towering skyscrapers, desert dunes, premier shopping, and bespoke Arabian nights.",
     heroImage: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332970/destinations/esim-dubai.png",
     heroBadges: [
-      { text: "Flights Included", icon: "plane" },
       { text: "Luxury 5★ Hotels", icon: "resort" },
       { text: "Desert Safari Included", icon: "shield" },
       { text: "Flexible Itinerary", icon: "heart" },
@@ -392,12 +399,18 @@ export const detailedPackageTemplates = {
       { day: "05", title: "Day 5 – Departure", desc: "Private airport drop with memories of glamorous Dubai." },
     ],
     inclusions: [
-      "Round Trip Flights (DEL – Dubai)",
       "4 Nights in 5★ Central Hotel",
       "Daily Buffet Breakfast",
       "Private Airport & Sightseeing Transfers",
       "Desert Safari with BBQ & Entertainment",
       "Burj Khalifa & Marina Cruise Tickets",
+    ],
+    exclusions: [
+      "International Flights",
+      "UAE Tourist Visa Fees",
+      "Tourism Dirham Fee (payable at hotel)",
+      "Lunches & Personal Shopping Expenses",
+      "Discretionary Tips & Porterage",
     ],
     price: "34,999*",
     priceUnit: "per person (approx.)",
@@ -454,8 +467,8 @@ export function getEnrichedPackage(rawPackage, requestedSlug, otherDbPackages = 
       ...(Array.isArray(rawPackage.travelType) && rawPackage.travelType.length > 0
         ? rawPackage.travelType
         : Array.isArray(rawPackage.category)
-        ? rawPackage.category.filter((c) => !c.toLowerCase().includes("star"))
-        : []),
+          ? rawPackage.category.filter((c) => !c.toLowerCase().includes("star"))
+          : []),
     ];
 
     // Determine category tag
@@ -485,8 +498,8 @@ export function getEnrichedPackage(rawPackage, requestedSlug, otherDbPackages = 
       travelTypes.length > 0
         ? travelTypes.join(", ")
         : isDomestic
-        ? "Domestic Tour"
-        : "International Tour";
+          ? "Domestic Tour"
+          : "International Tour";
 
     let bestFor = "Couples & Families";
     if (travelTypes.some((t) => t.toLowerCase().includes("honeymoon"))) {
@@ -528,24 +541,42 @@ export function getEnrichedPackage(rawPackage, requestedSlug, otherDbPackages = 
     const dynamicMoreDestinations =
       Array.isArray(otherDbPackages) && otherDbPackages.length > 0
         ? otherDbPackages.slice(0, 4).map((p) => {
-            const pTravelType = [
-              ...(Array.isArray(p.travelType) ? p.travelType : []),
-              ...(Array.isArray(p.category) ? p.category : []),
-            ].find((c) => !c.toLowerCase().includes("star"));
+          const pTravelType = [
+            ...(Array.isArray(p.travelType) ? p.travelType : []),
+            ...(Array.isArray(p.category) ? p.category : []),
+          ].find((c) => !c.toLowerCase().includes("star"));
 
-            return {
-              name: p.destinations || p.city || p.country || p.title,
-              tag: pTravelType ? `${pTravelType} Package` : "Holiday Package",
-              image: p.thumbnail || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332952/backgrounds/hotelsHero.png",
-              slug: p.slug || p._id.toString(),
-            };
-          })
+          return {
+            name: p.destinations || p.city || p.country || p.title,
+            tag: pTravelType ? `${pTravelType} Package` : "Holiday Package",
+            image: p.thumbnail || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332952/backgrounds/hotelsHero.png",
+            slug: p.slug || p._id.toString(),
+          };
+        })
         : [
-            { name: "Maldives", tag: "Honeymoon Package", image: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332952/backgrounds/hotelsHero.png", slug: "maldives-honeymoon" },
-            { name: "Bali", tag: "Honeymoon Package", image: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332944/backgrounds/ctaHotel.png", slug: "bali-retreat" },
-            { name: "Thailand", tag: "Honeymoon Package", image: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332970/destinations/esim-thailand.png", slug: "thailand-escape" },
-            { name: "Dubai", tag: "Honeymoon Package", image: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332970/destinations/esim-dubai.png", slug: "dubai-holiday" },
-          ];
+          { name: "Maldives", tag: "Honeymoon Package", image: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332952/backgrounds/hotelsHero.png", slug: "maldives-honeymoon" },
+          { name: "Bali", tag: "Honeymoon Package", image: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332944/backgrounds/ctaHotel.png", slug: "bali-retreat" },
+          { name: "Thailand", tag: "Honeymoon Package", image: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332970/destinations/esim-thailand.png", slug: "thailand-escape" },
+          { name: "Dubai", tag: "Honeymoon Package", image: "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332970/destinations/esim-dubai.png", slug: "dubai-holiday" },
+        ];
+
+    const { days: resolvedDays, nights: resolvedNights } = getPackageDuration(rawPackage);
+
+    const rawDestStr = rawPackage.destinations || rawPackage.city || rawPackage.country || "Worldwide";
+    const destinationsList = rawDestStr
+      .split(/[,•|/]/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    // Clean destination name for section titles
+    let whyChooseTarget = primaryTitle;
+    if (rawPackage.city && rawPackage.city.trim()) {
+      whyChooseTarget = toTitleCase(rawPackage.city.trim());
+    } else if (destinationsList.length === 1) {
+      whyChooseTarget = destinationsList[0];
+    } else if (rawPackage.country && rawPackage.country.trim()) {
+      whyChooseTarget = toTitleCase(rawPackage.country.trim());
+    }
 
     return {
       _id: rawPackage._id,
@@ -556,19 +587,21 @@ export function getEnrichedPackage(rawPackage, requestedSlug, otherDbPackages = 
       subtitle: rawPackage.description || "Discover bespoke luxury travel experiences crafted just for you.",
       heroImage: rawPackage.thumbnail || "https://res.cloudinary.com/di9q2cpeu/image/upload/v1794332952/backgrounds/hotelsHero.png",
       heroBadges: [
-        { text: "Flights Included", icon: "plane" },
         { text: "Luxury Accommodation", icon: "resort" },
-        { text: "Travel Insurance Included", icon: "shield" },
+        { text: "Travel Insurance Optional", icon: "shield" },
         { text: "Customizable Itinerary", icon: "heart" },
       ],
       specs: {
-        destination: rawPackage.destinations || rawPackage.city || rawPackage.country || "Worldwide",
-        duration: `${rawPackage.nights || 4} Nights / ${rawPackage.days || 5} Days`,
+        destination: rawDestStr,
+        destinationsList,
+        city: rawPackage.city || "",
+        country: rawPackage.country || "",
+        duration: `${resolvedNights} Nights / ${resolvedDays} Days`,
         bestFor: bestFor,
         packageType: packageTypeStr,
       },
       whyChoose: {
-        title: `Why Choose ${rawPackage.destinations || primaryTitle}?`,
+        title: `Why Choose ${whyChooseTarget}?`,
         description: rawPackage.description || "Designed for travelers who want privacy, luxury, and unforgettable moments.",
         features: [
           { icon: "villa", title: "Luxury Accommodation" },
@@ -586,45 +619,54 @@ export function getEnrichedPackage(rawPackage, requestedSlug, otherDbPackages = 
       itineraryImage: centerItineraryImage,
       itinerary: Array.isArray(rawPackage.timeline) && rawPackage.timeline.length > 0
         ? rawPackage.timeline.map((item, idx) => ({
-            day: String(idx + 1).padStart(2, "0"),
-            title: item.dayTitle || `Day ${idx + 1}`,
-            desc: item.description || "Sightseeing and leisure activities.",
-            image1: item.image1 || "",
-            image2: item.image2 || "",
-          }))
+          day: String(idx + 1).padStart(2, "0"),
+          title: item.dayTitle || `Day ${idx + 1}`,
+          desc: item.description || "Sightseeing and leisure activities.",
+          image1: item.image1 || "",
+          image2: item.image2 || "",
+        }))
         : [
-            { day: "01", title: "Day 1 – Arrival & Welcome", desc: "Airport pickup & transfer to hotel. Relax and unwind." },
-            { day: "02", title: "Day 2 – City & Cultural Tour", desc: "Explore iconic landmarks and local attractions." },
-            { day: "03", title: "Day 3 – Signature Excursion", desc: "A full day of curated experiences and sightseeing." },
-            { day: "04", title: "Day 4 – Leisure & Shopping", desc: "Enjoy resort amenities, spa, or local shopping." },
-            { day: "05", title: "Day 5 – Departure", desc: "Private airport transfer with fond memories." },
-          ],
+          { day: "01", title: "Day 1 – Arrival & Welcome", desc: "Airport pickup & transfer to hotel. Relax and unwind." },
+          { day: "02", title: "Day 2 – City & Cultural Tour", desc: "Explore iconic landmarks and local attractions." },
+          { day: "03", title: "Day 3 – Signature Excursion", desc: "A full day of curated experiences and sightseeing." },
+          { day: "04", title: "Day 4 – Leisure & Shopping", desc: "Enjoy resort amenities, spa, or local shopping." },
+          { day: "05", title: "Day 5 – Departure", desc: "Private airport transfer with fond memories." },
+        ],
       inclusions: rawPackage.inclusions && rawPackage.inclusions.length > 0
         ? rawPackage.inclusions
         : [
-            "Round Trip Flights / Transfers",
-            `${rawPackage.nights || 4} Nights Luxury Stay`,
-            "Daily Breakfast & Dinners",
-            "Private Airport Transfers",
-            "Guided Sightseeing Tours",
-            "24/7 Dedicated Concierge Support",
-          ],
+          "Round Trip Flights / Transfers",
+          `${resolvedNights} Nights Luxury Stay`,
+          "Daily Breakfast & Dinners",
+          "Private Airport Transfers",
+          "Guided Sightseeing Tours",
+          "24/7 Dedicated Concierge Support",
+        ],
+      exclusions: rawPackage.exclusions && rawPackage.exclusions.length > 0
+        ? rawPackage.exclusions
+        : [
+          "Personal Expenses & Shopping",
+          "Lunch & Dinners (unless specified)",
+          "Optional Tours & Activities",
+          "Tips & Gratuities for Guides/Drivers",
+          "Travel Insurance (available on request)",
+        ],
       price: (rawPackage.domesticPrice || rawPackage.internationalPrice || "45,000").replace(/^₹\s*/, "") + "*",
       priceUnit: "per person (approx.)",
       bottomBanner: {
-        title: `Need a Customized ${rawPackage.destinations || primaryTitle} Plan?`,
+        title: `Need a Customized ${whyChooseTarget} Plan?`,
         subtitle: "Tell us your travel dates, party size and preferences.",
         note: "Our travel experts will create a personalized itinerary just for you.",
       },
       moreDestinations: dynamicMoreDestinations,
       faqs: Array.isArray(rawPackage.faqs)
         ? rawPackage.faqs
-            .filter((f) => f && f.question?.trim() && f.answer?.trim())
-            .map((f, idx) => ({
-              id: f._id?.toString() || `pkg-faq-${idx}`,
-              question: f.question.trim(),
-              answer: f.answer.trim(),
-            }))
+          .filter((f) => f && f.question?.trim() && f.answer?.trim())
+          .map((f, idx) => ({
+            id: f._id?.toString() || `pkg-faq-${idx}`,
+            question: f.question.trim(),
+            answer: f.answer.trim(),
+          }))
         : [],
     };
   }
